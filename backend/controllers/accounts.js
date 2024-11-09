@@ -1,38 +1,33 @@
 import { validationResult } from "express-validator";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { generate_salt} from "../secret-data.js";
 import { dynamoDB } from "../database/dynamodb.js";
 import dotenv from "dotenv";
 import AWS from "aws-sdk";
 
 dotenv.config();
 
-AWS.config.update({ region: process.env.REGION})
+AWS.config.update({ region: "us-east-2"})
 
 const jwtSecretkey = process.env.JWT_SECRET_KEY;
 
-const updateAccountCounter = async (tableName, amount) => {
+const generate_salt = async () => {
+    const saltRounds = process.env.SALT_ROUNDS;
+    const new_salt = bcrypt.genSalt(saltRounds);
+    return new_salt;
+}
 
-    const counterParams = {
-        TableName: tableName,
-        Key: {
-            "counter_id": { S: "global_counter" }
-        }
-    };
-
-    const counterData = await dynamoDB.getItem(counterParams).promise();
-    let currentCount = 0; 
-
-    if (counterData.Item && counterData.Item.account) {
-        currentCount = parseInt(counterData.Item.account.N) + amount;
-    }
-
+const updateAccountCounter = async (tableName, currentCount) => {
+    const account = parseInt(currentCount.account.N) + 1;
+    const nurse_id = parseInt(currentCount.nurse_id.N);
+    const patient_id = parseInt(currentCount.patient_id.N);
     const updateCounterParams = {
         TableName: tableName,
         Item: {
             "counter_id": { S: "global_counter" },
-            "account": { N: currentCount.toString() }
+            "account": { N: account.toString() },
+            "nurse_id": { N: nurse_id.toString() }, 
+            "patient_id": { N: patient_id.toString() }
         }
     };
 
@@ -48,13 +43,8 @@ const getAccountCounter = async (tableName) => {
     };
 
     const counterData = await dynamoDB.getItem(counterParams).promise();
-    let currentCount = 0; 
 
-    if (counterData.Item && counterData.Item.account) {
-        currentCount = parseInt(counterData.Item.account.N);
-    }
-
-    return currentCount;
+    return counterData.Item;
 }
 
 const addAccount = async (req, res) => {
@@ -67,43 +57,48 @@ const addAccount = async (req, res) => {
     const { username, password } = req.body;
     try {
         const params = {
-            TableName: "Account",
-            Key: {
-                name: {S: username}
+            TableName: 'Account',
+            FilterExpression: '#username = :usernameValue',
+            ExpressionAttributeNames: {
+                '#username': 'username'
+            },
+            ExpressionAttributeValues: {
+                ':usernameValue': { S: username }  // Define the value with the type
             }
-        }
-        
-        dynamoDB.getItem(params, async (err, data) => {
+        };
+        dynamoDB.scan(params, async (err, data) => {
             if (err) {
-                console.log("Error", err)
+                console.log("Error for getting item", err)
             } 
 
-            if (Object.keys(data).length === 1) {
+            if (data) {
                 return res.status(400).json({message: "Username already exists"})
             }
 
-            const currentCount = await getAccountCounter("Account");
-            
-            const salt = await generate_salt()
-            const hashPassword = await bcrypt.hash(password, salt);
+        const currentCount = await getAccountCounter("CounterTable");
+        
+        const salt = await generate_salt()
+        const hashPassword = await bcrypt.hash(password, salt);
+        const account_id = parseInt(currentCount.account.N) + 1;
+        const addingParams = {
+            TableName: "Account",
+            Item: {
+                id: { S: account_id.toString() },
+                username: { S: username },
+                password: { S: hashPassword}
+            },
+        };
 
-            const addingParams = {
-                TableName: "Account",
-                Item: {
-                    id: { N: currentCount.toString() },
-                    name: { S: username },
-                    password: {S: hashPassword}
-                },
-            };
+        dynamoDB.putItem(addingParams, (err, data) => {
+            if (err) {
+                return res.json({message: "Error during adding " + err})
+            } else {
+                return res.status(200).json({ message: "add succesfully"})
+            }
+        })
 
-            dynamoDB.putItem(addingParams, (err, data) => {
-                if (err) {
-                    return res.json({message: "Error during adding"})
-                } else {
-                    return res.status(200).json({ message: "add succesfully"})
-                }
-            })
-            
+        await updateAccountCounter("CounterTable", currentCount);
+        
         })
         
     } catch(error) {
@@ -115,22 +110,26 @@ const authorization = async (req, res) => {
     const { username, password } = req.body;
 
     const params = {
-        TableName: "Account",
-        Key: {
-            "username": { S: username }
-        }, 
-        
+        TableName: 'Account',
+        FilterExpression: '#username = :usernameValue',
+        ExpressionAttributeNames: {
+            '#username': 'username'
+        },
+        ExpressionAttributeValues: {
+            ':usernameValue': { S: username }  // Define the value with the type
+        }
     };
 
-    dynamoDB.getItem(params, async (err, data) => {
+    dynamoDB.scan(params, async (err, data) => {
         if (err) {
             return res.json({message: err});
         } 
 
-        if (Object.keys(data).length === 0) {
-            return res.status(401).json({message: "Invalid email or password"})
+        if (!data) {
+            return res.status(401).json({message: "You need to register first"})
         }
-        const hashedPassword = data.Item.password.S;
+        console.log(data)
+        const hashedPassword = data.Items[0].password.S;
         const match = bcrypt.compare(password, hashedPassword);
 
         if (match) {
@@ -148,7 +147,8 @@ const authorization = async (req, res) => {
                 if (err) {
                     return res.json({message: "Error during adding"})
                 } else {
-                    return res.status(200).json({message: "success", token: token})
+                    res.cookie("TOKENS", token, {httpOnly: true, secure: true, maxAge: 1000 * 60 * 60 * 5});
+                    return res.status(200).json({message: "success"})
                 }
             })
             
