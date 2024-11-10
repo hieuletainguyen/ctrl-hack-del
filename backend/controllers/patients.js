@@ -12,13 +12,53 @@ dotenv.config();
 AWS.config.update({ region: "us-east-2"})
 
 const addPatient = async (req, res) => {
-    const {report, patientName} = req.body;
+    const {name, dob, phone, email} = req.body;
+
+    const paramsAddPatient = {
+        TableName: "Patient",
+        Item: {
+            id: {S: uuidv4()},
+            patientName: {S: name},
+            dob: {S: dob},
+            phone: {S: phone},
+            email: {S: email}
+        }
+    }
+
+    await dynamoDB.putItem(paramsAddPatient).promise().then((data) => {
+        return res.status(200).json({message: "success", data: data});
+    }).catch((err) => {
+        return res.status(400).json({message: "error", data: err});
+    });
+}
+
+const submitReport = async (req, res) => {
+    const {report, patientId} = req.body;
     const cookie = req.cookies;
 
     const decoded = await _decode_token(cookie.token);
     if (decoded.message === "Invalid token") {
         return res.status(401).json({ message: "Invalid token" });
     }
+
+    const paramsGetPatient = {
+        TableName: "Patient",
+        Key: {
+            id: {S: patientId}
+        }
+    }
+
+    const patientInfo = await dynamoDB.getItem(paramsGetPatient).promise().then((data) => {
+        if (data.Item) {
+            data.Item = Object.keys(data.Item).reduce((acc, key) => {
+                acc[key] = data.Item[key].S || data.Item[key].N || data.Item[key].BOOL;
+                return acc;
+            }, {});
+        }
+        return data.Item;
+    });
+
+    console.log(patientInfo);
 
     // get all skills required =============================
     const paramsGetSkills = {
@@ -46,8 +86,11 @@ const addPatient = async (req, res) => {
     const paramsAddPatient = {
         TableName: "Patient",
         Item: {
-            id: {S: uuidv4()},
-            patientName: {S: patientName},
+            id: {S: patientId},
+            patientName: {S: patientInfo.patientName},
+            dob: {S: patientInfo.dob},
+            phone: {S: patientInfo.phone},
+            email: {S: patientInfo.email},
             report: {S: report},
             treatment: {SS: resultTreatment.skills},
             nurse: {N: resultNurse.matches.nurseId},
@@ -126,6 +169,9 @@ const deletePatient = async (req, res) => {
 
     const paramsDeletePatient = {
         TableName: "Patient",
+        Key: {
+            id: {S: patientId}
+        }
     }
 
     await dynamoDB.deleteItem(paramsDeletePatient).promise().then((data) => {
@@ -167,6 +213,7 @@ export {
     getPatient,
     updatePatient,
     deletePatient,
-    recentPatient
+    recentPatient,
+    submitReport
 }
 

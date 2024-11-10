@@ -1,6 +1,6 @@
-import dynamoDB from "../config/db.js";
+import { dynamoDB } from "../database/dynamodb.js";
 
-export const addSkill = async (req, res) => {
+const addSkill = async (req, res) => {
     const { skillName } = req.body;
     const paramsAddSkill = {
         TableName: "Skill",
@@ -16,7 +16,7 @@ export const addSkill = async (req, res) => {
     });
 }
 
-export const getSkill = async (req, res) => {
+const getSkill = async (req, res) => {
     const paramsGetSkill = {
         TableName: "Skill",
         Item: {
@@ -29,4 +29,9 @@ export const getSkill = async (req, res) => {
     }).catch((err) => {
         return res.status(400).json({message: "error"});
     });
+}
+
+export {
+    addSkill,
+    getSkill
 }

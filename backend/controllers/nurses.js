@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
-import dynamoDB from "../config/db.js";
+import { dynamoDB } from "../database/dynamodb.js";
 
-export const addNurse = async (req, res) => {
+const addNurse = async (req, res) => {
     const { nurseName, skills } = req.body;
     const paramsAddNurse = {
         TableName: "Nurse",
@@ -22,7 +22,7 @@ export const addNurse = async (req, res) => {
     });
 }
 
-export const getNurse = async (req, res) => {
+const getNurse = async (req, res) => {
     const paramsGetNurse = {
         TableName: "Nurse"
     }
@@ -38,7 +38,7 @@ export const getNurse = async (req, res) => {
 }
 
 
-export const updateNurse = async (req, res) => {
+const updateNurse = async (req, res) => {
     const { id, nurseName, skills } = req.body;
     const paramsUpdateNurse = {
         TableName: "Nurse",
@@ -60,8 +60,8 @@ export const updateNurse = async (req, res) => {
 }
 
 
-export const deleteNurse = async (req, res) => {
-    const { id } = req.body;
+const deleteNurse = async (req, res) => {
+    const { id } = req.params;
     const paramsDeleteNurse = {
         TableName: "Nurse",
         Key: {id: {S: id}}
@@ -74,3 +74,9 @@ export const deleteNurse = async (req, res) => {
     });
 }
 
+export {
+    addNurse,
+    getNurse,
+    updateNurse,
+    deleteNurse
+}

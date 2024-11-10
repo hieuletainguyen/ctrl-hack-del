@@ -6,6 +6,6 @@ const router = Router();
 router.post("/add-nurse", nurse.addNurse);
 router.get("/get-nurse", nurse.getNurse);
 router.put("/update-nurse", nurse.updateNurse);
-router.delete("/delete-nurse", nurse.deleteNurse);
+router.delete("/delete-nurse/:id", nurse.deleteNurse);
 
 export default router;
