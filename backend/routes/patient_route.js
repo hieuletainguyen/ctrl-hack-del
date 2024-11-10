@@ -3,11 +3,11 @@ import * as patient from "../controllers/patients.js";
 
 const router = Router();
 
-router.post("/add-patient", patient.addPatient);
-router.post("/submit-report", patient.submitReport);
-router.get("/get-patient/:patientName", patient.getPatientByName);
-router.put("/update-patient/:patientId", patient.updatePatient);
-router.delete("/delete-patient/:patientId", patient.deletePatient);
-router.post("/recent-patient", patient.recentPatient);
+router.post("/patients/add-patient", patient.addPatient);
+router.post("/patients/submit-report", patient.submitReport);
+router.get("/patients/get-patient/:patientName", patient.getPatientByName);
+router.put("/patients/update-patient/:patientId", patient.updatePatient);
+router.delete("/patients/delete-patient/:patientId", patient.deletePatient);
+router.post("/patients/recent-patient", patient.recentPatient);
 
 export default router;

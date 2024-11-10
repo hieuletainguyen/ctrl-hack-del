@@ -39,7 +39,8 @@ const getNurse = async (req, res) => {
 
 
 const updateNurse = async (req, res) => {
-    const { id, nurseName, skills } = req.body;
+    const { nurseName, skills } = req.body;
+    const nurseId = req.params.nurseId;
     // example {
     //     "id": "90e46e0c-9a52-4173-a103-e98111e9ab74",
     //     "nurseName": "Hirano",
@@ -49,7 +50,7 @@ const updateNurse = async (req, res) => {
     const paramsUpdateNurse = {
         TableName: "Nurse",
         Key: {
-            id: {S: id}
+            id: {S: nurseId}
         },
         UpdateExpression: "set nurseName = :nurseName ADD skills :skills",
         ExpressionAttributeValues: {
@@ -67,10 +68,10 @@ const updateNurse = async (req, res) => {
 
 
 const deleteNurse = async (req, res) => {
-    const { id } = req.params;
+    const { nurseId } = req.params;
     const paramsDeleteNurse = {
         TableName: "Nurse",
-        Key: {id: {S: id}}
+        Key: {id: {S: nurseId}}
     }
 
     await dynamoDB.deleteItem(paramsDeleteNurse).promise().then((data) => {

@@ -3,9 +3,9 @@ import { Router } from "express";
 
 const router = Router();
 
-router.post("/add-nurse", nurse.addNurse);
-router.get("/get-nurse", nurse.getNurse);
-router.put("/update-nurse", nurse.updateNurse);
-router.delete("/delete-nurse/:id", nurse.deleteNurse);
+router.post("/nurses/add-nurse", nurse.addNurse);
+router.get("/nurses/get-nurse", nurse.getNurse);
+router.put("/nurses/update-nurse/:nurseId", nurse.updateNurse);
+router.delete("/nurses/delete-nurse/:nurseId", nurse.deleteNurse);
 
 export default router;
