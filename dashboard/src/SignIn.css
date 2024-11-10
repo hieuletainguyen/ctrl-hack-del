@@ -1,0 +1,184 @@
+:root {
+    --default-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      Ubuntu, "Helvetica Neue", Helvetica, Arial, "PingFang SC",
+      "Hiragino Sans GB", "Microsoft Yahei UI", "Microsoft Yahei",
+      "Source Han Sans CN", sans-serif;
+  }
+  
+  .main-container {
+    overflow: hidden;
+  }
+  
+  .main-container,
+  .main-container * {
+    box-sizing: border-box;
+  }
+  
+  input,
+  select,
+  textarea,
+  button {
+    outline: 0;
+  }
+  
+  .main-container {
+    position: relative;
+    width: 1440px;
+    height: 1024px;
+    margin: 0 auto;
+    font-size: 0px;
+    background: #ffffff;
+    overflow: hidden;
+  }
+  .sign-in-1 {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    position: relative;
+    width: 255px;
+    height: 53px;
+    margin: 211px 0 0 275px;
+    color: #000000;
+    font-family: Jost, var(--default-font-family);
+    font-size: 75px;
+    font-weight: 500;
+    line-height: 24px;
+    text-align: left;
+    letter-spacing: -0.75px;
+    z-index: 5;
+  }
+  .input {
+    position: relative;
+    width: 483px;
+    height: 52px;
+    margin: 87px 0 0 150px;
+    background: rgba(255, 255, 255, 0.35);
+    z-index: 6;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 2px 16px 0 rgba(0, 0, 0, 0.06);
+  }
+  .text-container {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 2px;
+    position: relative;
+    width: 60px;
+    margin: 15px 0 0 16px;
+    z-index: 7;
+    max-width: 302px;
+  }
+  .value {
+    flex-grow: 1;
+    flex-shrink: 0;
+    flex-basis: auto;
+    position: relative;
+    height: 22px;
+    color: rgba(0, 0, 0, 0.3);
+    font-family: SF Pro Text, var(--default-font-family);
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 22px;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    letter-spacing: -0.96px;
+    z-index: 8;
+    overflow: hidden;
+  }
+  .input-2 {
+    position: absolute;
+    width: 483px;
+    height: 52px;
+    top: 0;
+    left: 0;
+    background: transparent;
+    border: none;
+    z-index: 9;
+    outline: none;
+  }
+  .line {
+    position: relative;
+    width: 642px;
+    height: 10px;
+    margin: 15px 0 0 82px;
+    background: url(../assets/images/2396161c-d7ab-4d53-b9cc-55a91ed62fce.png)
+      no-repeat center;
+    background-size: cover;
+    z-index: 3;
+  }
+  .password {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    position: relative;
+    width: 341.129px;
+    height: 54px;
+    margin: 94px 0 0 150px;
+    color: #000000;
+    font-family: Jost, var(--default-font-family);
+    font-size: 40px;
+    font-weight: 400;
+    line-height: 24px;
+    text-align: left;
+    letter-spacing: -0.4px;
+    opacity: 0.5;
+    z-index: 11;
+    text-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  }
+  .line-3 {
+    position: relative;
+    width: 641.009px;
+    height: 13px;
+    margin: -2px 0 0 82.991px;
+    background: url(../assets/images/738f1b74-9752-46c8-bdf6-39bb058500e5.png)
+      no-repeat center;
+    background-size: cover;
+    z-index: 4;
+  }
+  .button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
+    gap: 8px;
+    position: relative;
+    width: 550px;
+    height: 75px;
+    margin: 148px 0 0 128px;
+    padding: 16px 24px 16px 24px;
+    cursor: pointer;
+    background: #2d3648;
+    border: none;
+    z-index: 1;
+    overflow: hidden;
+    border-radius: 20px;
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+  }
+  .sign-in-4 {
+    flex-shrink: 0;
+    flex-basis: auto;
+    position: relative;
+    height: 24px;
+    color: #ffffff;
+    font-family: Jost, var(--default-font-family);
+    font-size: 25px;
+    font-weight: 400;
+    line-height: 24px;
+    text-align: left;
+    white-space: nowrap;
+    letter-spacing: -0.25px;
+    z-index: 2;
+  }
+  .image {
+    position: absolute;
+    width: 1442.045px;
+    height: 1025.114px;
+    top: -1px;
+    left: 0px;
+    background: url(../assets/images/0bb01db3-fa5e-4029-bb8e-2bc9a1bfd9de.png)
+      no-repeat center;
+    background-size: cover;
+  }
+  
