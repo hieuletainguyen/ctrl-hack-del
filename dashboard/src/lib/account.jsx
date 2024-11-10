@@ -54,7 +54,7 @@ export const AccountProvider = () => {
 
     const useAccount = () => {
         useEffect(() => {
-            authenticatedFetch("/get_account")
+            authenticatedFetch("/accounts/get-account")
                 .then(res => {
                     if (res?.accepted)
                         setAccount(res.content)
@@ -66,7 +66,7 @@ export const AccountProvider = () => {
     }
 
     const signIn = (username, password) => asyncTry(async () => {
-        const res = await fetch(`${baseURL}/auth`, {
+        const res = await fetch(`${baseURL}/accounts/auth`, {
             credentials: "include",
             method: "POST",
             headers: {
