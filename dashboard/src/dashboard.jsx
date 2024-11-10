@@ -28,6 +28,7 @@ export default () => {
     const [query, setQuery] = useDebouncedState(null)
     const {authenticatedFetch} = useContext(AccountContext)
     const patient = query ? searchResult : recent
+    const navigate = useNavigate();
 
     useEffect(() => {
         authenticatedFetch("/patients/recent-patient")
@@ -43,6 +44,10 @@ export default () => {
         }
     }, [query])
 
+    const handleNewPatient = () => {
+        navigate("/popup");
+    };
+
     return (
         <NavigationLayout buttons={<Link to="/team">Manage Team</Link>}>
             <section>
@@ -50,7 +55,7 @@ export default () => {
                     <input className="grow-3" type="text" placeholder="Find patient" onChange={
                         e => setQuery(e.target.value)
                     } />
-                    <button className="flex-row compact"><FaSquarePlus /> New Patient</button>
+                    <button className="flex-row compact" onClick={handleNewPatient}><FaSquarePlus /> New Patient</button>
                 </div>
                 <h2>{query ? `Results for: ${query}` : "Recent Patients"}</h2>
                 <ol className="p-0">
