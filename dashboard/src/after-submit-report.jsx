@@ -5,9 +5,7 @@ const AfterSubmitReport = (props) => {
     const { patientName } = props;
     const [category, setCategory] = useState([]);
     const [matchingNurseId, setMatchingNurseId] = useState({});
-    const [matchingNurse, setMatchingNurse] = useState({
-        "name": ""
-    });
+    const [matchingNurse, setMatchingNurse] = useState({});
 
     useEffect(async () => {
         const fetchData = async () => {
@@ -16,11 +14,14 @@ const AfterSubmitReport = (props) => {
             setMatchingNurseId(response.data.nurse);
         };
         fetchData();
+    }, []);
 
-        if (matchingNurseId != "") {
+    useEffect(async () => {
+        const fetchData = async () => {
             const response = await axios.get(`${process.env.REACT_APP_API_URL}/nurses/get-nurse/${matchingNurseId}`);
-            setMatchingNurse(response.data.nurseName);
-        }
+            setMatchingNurse(response.data);
+        };
+        fetchData();
     }, [matchingNurseId]);
 
     return (
@@ -29,7 +30,7 @@ const AfterSubmitReport = (props) => {
                 <h1>Matching Nurse Result</h1>
                 <p>Category: {category}</p>
                 <button onClick={() => {
-                    navigate(`/nurse/${matchingNurse.id}`);
+                    <Link to={`/nurse`} state={{ nurseName: matchingNurse.name, skills: matchingNurse.skills }}>View Nurse Profile</Link>
                 }}>Matching Nurse: {matchingNurse.name}</button>
             </div>
         </NavigationLayout>

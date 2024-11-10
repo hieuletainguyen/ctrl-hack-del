@@ -17,6 +17,14 @@ const router = createBrowserRouter([
     {
         path: "/signin",
         element: <SignIn />
+    },
+    {
+        path: "/nurse",
+        element: <NurseProfile />
+    },
+    {
+        path: "/after-submit-report",
+        element: <AfterSubmitReport />
     }
 ])
 
