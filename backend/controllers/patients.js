@@ -69,7 +69,7 @@ const submitReport = async (req, res) => {
     const patientInfo = await dynamoDB.getItem(paramsGetPatient).promise().then((data) => {
         if (data.Item) {
             data.Item = Object.keys(data.Item).reduce((acc, key) => {
-                acc[key] = data.Item[key].S || data.Item[key].N || data.Item[key].BOOL;
+                acc[key] = data.Item[key].SS || data.Item[key].S || data.Item[key].N || data.Item[key].BOOL;
                 return acc;
             }, {});
         }
@@ -86,7 +86,7 @@ const submitReport = async (req, res) => {
         if (data.Items) {
             const skills = data.Items.map((item) => {
                     return Object.keys(item).reduce((acc, key) => {
-                        acc[key] = item[key].S || item[key].N || item[key].BOOL;
+                        acc[key] = item[key].SS || item[key].S || item[key].N || item[key].BOOL;
                     return acc;
                 }, {});
             });
@@ -155,7 +155,7 @@ const getPatientByName = async (req, res) => {
         if (data.Items) {
             data.Items = data.Items.map((item) => {
                 return Object.keys(item).reduce((acc, key) => {
-                    acc[key] = item[key].S || item[key].N || item[key].BOOL;
+                    acc[key] = item[key].SS || item[key].S || item[key].N || item[key].BOOL;
                     return acc;
                 }, {});
             });
@@ -191,7 +191,7 @@ const getPatientById = async (req, res) => {
 
     await dynamoDB.getItem(paramsGetPatient).promise().then((data) => { 
         data.Item = Object.keys(data.Item).reduce((acc, key) => {
-            acc[key] = data.Item[key].S || data.Item[key].N || data.Item[key].BOOL;
+            acc[key] = data.Item[key].SS || data.Item[key].S || data.Item[key].N || data.Item[key].BOOL;
             return acc;
         }, {});
         return res.status(200).json({
@@ -291,7 +291,7 @@ const recentPatient = async (req, res) => {
     await dynamoDB.scan(paramsRecentPatient).promise().then((data) => {
         data.Items = data.Items.map((item) => {
             return Object.keys(item).reduce((acc, key) => {
-                acc[key] = item[key].S || item[key].N || item[key].BOOL;
+                acc[key] = item[key].SS || item[key].S || item[key].N || item[key].BOOL;
                 return acc;
             }, {});
         });

@@ -56,7 +56,7 @@ const getNurse = async (req, res) => {
     await dynamoDB.scan(paramsGetNurse).promise().then((data) => {
         data.Items = data.Items.map((item) => {
             return Object.keys(item).reduce((acc, key) => {
-                acc[key] = item[key].S || item[key].N || item[key].BOOL;
+                acc[key] = item[key].SS || item[key].S || item[key].N || item[key].BOOL;
                 return acc;
             }, {});
         });
@@ -79,6 +79,7 @@ const updateNurse = async (req, res) => {
     }
 
     const { nurseName, skills } = req.body;
+    console.log(nurseName, skills);
     const nurseId = req.params.nurseId;
     // example {
     //     "id": "90e46e0c-9a52-4173-a103-e98111e9ab74",

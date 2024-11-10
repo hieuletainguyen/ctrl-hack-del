@@ -1,8 +1,9 @@
 import {useContext, useEffect, useState} from "react"
 import NavigationLayout from "./lib/navigation"
-import {useParams} from "react-router-dom"
+import {useParams, useNavigate} from "react-router-dom"
 import {AccountContext} from "./lib/account"
 import {NurseNavItem} from "./lib/component"
+
 
 const List = ({nurses}) => {
     return (
@@ -12,54 +13,81 @@ const List = ({nurses}) => {
     )
 }
 
-const Profile = ({nurse}) => {
+const Profile = ({nurse, auth}) => {
     const [skills, setSkills] = useState([]);
     const [edit, setEdit] = useState(false);
-    const [fullName, setFullName] = useState(nurse.fullName);
-    const [selectedSkills, setSelectedSkills] = useState([]);
+    const [fullName, setFullName] = useState(nurse.nurseName);
+    const [selectedSkill, setSelectedSkill] = useState("");
     const [nurseSkills, setNurseSkills] = useState(nurse.skills);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const url = `/skills/get-skill`;
-        authenticatedFetch(url).then(res => setSkills(res.data));
+        auth(url, {
+            method: "GET",
+        }).then(res => {
+            setSkills(res.content);
+        });
     }, []);
 
     const handleUpdateNurse = () => {
         setEdit(false)
         const url = `/nurses/update-nurse/${nurse.id}`;
-        authenticatedFetch(url, {
+        auth(url, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({fullName: fullName, skills: skills})
+            body: JSON.stringify({nurseName: fullName, skills: [selectedSkill]})
         }).then(res => {
             if (res?.accepted) setEdit(false);
         });
+        setSelectedSkill("");
+        setNurseSkills([...nurseSkills, selectedSkill]);
+        navigate(`/team`);
     }
 
     return <>
-        {
-            edit ?
-            <div>
-                <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} />
-                <select multiple value={selectedSkills} onChange={(e) => {
-                    const selected = Array.from(e.target.selectedOptions, option => option.value);
-                    setSelectedSkills(selected);
-                }}>
-                    {skills.filter(s => !nurseSkills.includes(s))
-                        .map(s => <option key={s} value={s}>{s}</option>)}
+        <div>
+            <div style={{display: "flex", gap: "1rem", alignItems: "center", marginBottom: "1rem"}}>
+                <input 
+                    type="text" 
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder={nurse.nurseName}
+                />
+                <span>You can edit the name of the nurse</span>
+            </div>
+
+            <div style={{display: "flex", gap: "1rem", alignItems: "center", marginBottom: "1rem"}}>
+                <select 
+                    value={selectedSkill}
+                    onChange={(e) => setSelectedSkill(e.target.value)}
+                >
+                    <option value="">Select a skill</option>
+                    {skills
+                        .filter(skill => !nurseSkills?.includes(skill))
+                        .map(skill => (
+                            <option key={skill} value={skill}>
+                                {skill}
+                            </option>
+                        ))
+                    }
                 </select>
-                <button onClick={() => {handleUpdateNurse()}}>Save</button>
-            </div> :
-            <>
-                <h1>{nurse.fullName}</h1>
-                <ol>
-                    {nurse.skills.map(s => <li key={s}>{s}</li>)}
-                </ol>
-                <button onClick={() => setEdit(true)}>Edit</button>
-            </>
-        }
+                <button onClick={handleUpdateNurse}>
+                    Add Skill & Edit
+                </button>
+            </div>
+
+            <div>
+                <h3>Current Skills:</h3>
+                <ul>
+                    {nurseSkills?.map(skill => (
+                        <li key={skill}>{skill}</li>
+                    ))}
+                </ul>
+            </div>
+        </div>
 
     </>
 }
@@ -71,14 +99,15 @@ export default () => {
 
     useEffect(() => {
         const url = id ? `/nurses/get-nurse/${id}` : "/nurses/get-nurse"
-        authenticatedFetch(url).then(res =>
-            res?.accepted && setNurses(res.content)
-        )
+        authenticatedFetch(url).then(res => {
+            res?.accepted && setNurses(res.content);
+        })
     }, [])
 
     return (
+        
         <NavigationLayout buttons={[<button>Skills</button>]}>
-            {id ? <Profile nurse={nurses[0]} /> : <List nurses={nurses} />}
+            {id ? <Profile nurse={nurses?.find(n => n.id === id)} auth={authenticatedFetch} />  : <List nurses={nurses} />}
         </NavigationLayout>
     )
 }
