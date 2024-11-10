@@ -7,8 +7,21 @@ import {NurseNavItem} from "./lib/component"
 
 const List = ({nurses}) => {
     return (
-        <ol>
-            {nurses?.map(n => <li key={n.id}><NurseNavItem id={n.id} /></li>)}
+        <ol style={{
+            background: "rgba(238, 238, 238, 0.1)",
+            backdropFilter: "blur(8px)",
+            padding: "25px",
+            borderRadius: "10px",
+            listStyle: "none"
+        }}>
+            {nurses?.map(n => <li style={{
+                background: "transparent",
+                transition: "all 0.3s ease",
+                cursor: "pointer",
+                fontSize: "20px"
+            }} 
+            className="nurse-list-item" 
+            key={n.id}><NurseNavItem id={n.id} /></li>)}
         </ol>
     )
 }
@@ -107,7 +120,15 @@ export default () => {
     return (
         
         <NavigationLayout buttons={[<button>Skills</button>]}>
-            {id ? <Profile nurse={nurses?.find(n => n.id === id)} auth={authenticatedFetch} />  : <List nurses={nurses} />}
+            {id ? <Profile nurse={nurses?.find(n => n.id === id)} auth={authenticatedFetch} /> : 
+              <div style={{
+                backdropFilter: "blur(8px)",
+                padding: "25px",
+                borderRadius: "10px"
+              }}>
+                <List nurses={nurses} />
+              </div>
+            }
         </NavigationLayout>
     )
 }
