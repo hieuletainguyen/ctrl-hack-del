@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./Home.css";
+import "./PopUp.css";
 
 export default function PopUp() {
   const [formData, setFormData] = useState({
