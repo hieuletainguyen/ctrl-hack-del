@@ -45,10 +45,10 @@ const updateNurse = async (req, res) => {
         Key: {
             id: {S: id}
         },
-        UpdateExpression: "set nurseName = :nurseName, skills = :skills",
+        UpdateExpression: "set nurseName = :nurseName ADD skills :skills",
         ExpressionAttributeValues: {
-            ":nurseName": nurseName,
-            ":skills": skills
+            ":nurseName": {S: nurseName},
+            ":skills": {SS: skills}
         }
     }
 

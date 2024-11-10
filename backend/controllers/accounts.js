@@ -91,7 +91,7 @@ const authentication = async (req, res) => {
             return res.json({message: err});
         } 
 
-        if (!data) {
+        if (!data.Items) {
             return res.status(401).json({message: "You need to register first"})
         }
         const hashedPassword = data.Items[0].password.S;
