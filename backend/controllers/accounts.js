@@ -17,36 +17,6 @@ const generate_salt = async () => {
     return new_salt;
 }
 
-const updateAccountCounter = async (tableName, currentCount) => {
-    const account = parseInt(currentCount.account.N) + 1;
-    const nurse_id = parseInt(currentCount.nurse_id.N);
-    const patient_id = parseInt(currentCount.patient_id.N);
-    const updateCounterParams = {
-        TableName: tableName,
-        Item: {
-            "counter_id": { S: "global_counter" },
-            "account": { N: account.toString() },
-            "nurse_id": { N: nurse_id.toString() }, 
-            "patient_id": { N: patient_id.toString() }
-        }
-    };
-
-    await dynamoDB.putItem(updateCounterParams).promise();
-}
-
-const getAccountCounter = async (tableName) => {
-    const counterParams = {
-        TableName: tableName,
-        Key: {
-            "counter_id": { S: "global_counter" }
-        }
-    };
-
-    const counterData = await dynamoDB.getItem(counterParams).promise();
-
-    return counterData.Item;
-}
-
 const addAccount = async (req, res) => {
     const errors = validationResult(req);
 
@@ -74,31 +44,25 @@ const addAccount = async (req, res) => {
             if (data) {
                 return res.status(400).json({message: "Username already exists"})
             }
-
-        const currentCount = await getAccountCounter("CounterTable");
         
-        const salt = await generate_salt()
-        const hashPassword = await bcrypt.hash(password, salt);
-        const account_id = parseInt(currentCount.account.N) + 1;
-        const addingParams = {
-            TableName: "Account",
-            Item: {
-                id: { S: account_id.toString() },
-                username: { S: username },
-                password: { S: hashPassword}
-            },
-        };
+            const salt = await generate_salt()
+            const hashPassword = await bcrypt.hash(password, salt);
+            const addingParams = {
+                TableName: "Account",
+                Item: {
+                    id: { S: uuidv4() },
+                    username: { S: username },
+                    password: { S: hashPassword }
+                },
+            };
 
-        dynamoDB.putItem(addingParams, (err, data) => {
-            if (err) {
-                return res.json({message: "Error during adding " + err})
-            } else {
-                return res.status(200).json({ message: "add succesfully"})
-            }
-        })
-
-        await updateAccountCounter("CounterTable", currentCount);
-        
+            dynamoDB.putItem(addingParams, (err, data) => {
+                if (err) {
+                    return res.json({message: "Error during adding " + err})
+                } else {
+                    return res.status(200).json({ message: "add succesfully"})
+                    }
+                })        
         })
         
     } catch(error) {
@@ -116,7 +80,7 @@ const authorization = async (req, res) => {
             '#username': 'username'
         },
         ExpressionAttributeValues: {
-            ':usernameValue': { S: username }  // Define the value with the type
+            ':usernameValue': { S: username }
         }
     };
 
@@ -128,18 +92,18 @@ const authorization = async (req, res) => {
         if (!data) {
             return res.status(401).json({message: "You need to register first"})
         }
-        console.log(data)
         const hashedPassword = data.Items[0].password.S;
+        const userId = data.Items[0].id.S;
         const match = bcrypt.compare(password, hashedPassword);
 
         if (match) {
-            const token = jwt.sign({username: username}, jwtSecretkey, {expiresIn: "5h"});
+            const token = jwt.sign({userId: userId}, jwtSecretkey, {expiresIn: "5h"});
             
             const addingParams = {
                 TableName: "Token",
                 Item: {
                     token: { S: token },
-                    username: {S: username}
+                    userId: {S: userId}
                 },
             };
 
@@ -161,7 +125,7 @@ const authorization = async (req, res) => {
 }
 
 const logout = (req, res) => {
-    const {token} = req.body;
+    const token = req.cookies?.TOKENS;
 
     if (token){
         const params = {
@@ -181,35 +145,85 @@ const logout = (req, res) => {
     }
 }
 
-const decode_token = (req, res) => {
-    const {token} = req.body;
-
-    if (token) {
+const _decode_token = (token) => {
+    return new Promise((resolve, reject) => {
         jwt.verify(token, jwtSecretkey, (err, decoded) => {
             if (err) {
-                return res.status(401).json({message: "Invalid token"})
-            } 
+                reject({ message: "Invalid token" });
+                return;
+            }
 
             const params = {
                 TableName: "Token",
                 Key: {
-                    token: { S: token}
-                }, 
-                ProjectionExpression: "username"
-            }
-
-            dynamoDB.getItem(params, async (err, data) => {
-                if (err) {
-                    return res.json({message: err});
-                } 
-
-                if (Object.keys(data).length === 1) {
-                    return res.status(200).json({ message: "success", username: decoded.username })
-                } else {
-                    return res.status(401).json({ message: "Invalid token"})
+                    token: { S: token }
                 }
-            })
-        })
+            };
+
+            dynamoDB.getItem(params, (err, data) => {
+                if (err) {
+                    reject({ message: err });
+                    return;
+                }
+                
+                if (Object.keys(data).length === 0) {
+                    reject({ message: "Invalid token" });
+                    return;
+                }
+                
+                resolve({ message: "success", userId: decoded.userId });
+            });
+        });
+    });
+};
+
+const decode_token =  (req, res) => {
+    const token = req.cookies?.TOKENS;
+    console.log(token)
+    if (token) {
+        const data = _decode_token(token);
+        if (data.message === "success") {
+            return res.status(200).json(data);
+        } else {
+            return res.status(401).json(data);
+        }
+    }
+}
+
+const getAccount = async (req, res) => {
+    const token = req.cookies?.TOKENS;
+
+    if (!token) {
+        return res.status(401).json({ message: "No authentication token found" });
+    }
+
+    try {
+        const tokenData = await _decode_token(token);
+        
+        const params = {
+            TableName: "Account",
+            Key: {
+                id: { S: tokenData.userId }
+            }
+        };
+
+        dynamoDB.getItem(params, (err, data) => {
+            if (err) {
+                return res.json({ message: err });
+            }
+            if (data.Item && data.Item.password) {
+                delete data.Item.password;
+            }
+            if (data.Item) {
+                data.Item = Object.keys(data.Item).reduce((acc, key) => {
+                    acc[key] = data.Item[key].S || data.Item[key].N || data.Item[key].BOOL;
+                    return acc;
+                }, {});
+            }
+            return res.status(200).json({ message: "success", data: data.Item });
+        });
+    } catch (error) {
+        return res.status(401).json({ message: error.message || "Error processing request" });
     }
 }
 
@@ -218,6 +232,7 @@ export {
     addAccount, 
     authorization, 
     logout, 
-    decode_token
+    decode_token, 
+    getAccount
 }
 
