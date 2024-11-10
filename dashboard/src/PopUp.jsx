@@ -67,11 +67,10 @@ export default function PopUp() {
                 />
               </div>
               <div className="modal-body">
-                <div className="row mb-3">
-                  <label htmlFor="fullName" className="col-sm-2 col-form-label">
+                <div className="mb-3 d-flex">
+                  <label htmlFor="fullName" className="col-sm-2">
                     Full Name:
                   </label>
-                  <div className="col-sm-10">
                     <input
                       id="fullName"
                       type="text"
@@ -80,8 +79,8 @@ export default function PopUp() {
                       onChange={handleChange}
                       name="fullName"
                       className="form-control"
+                      style={{ border: '1px solid #ccc' }} // Add border inline as a test
                     />
-                  </div>
                 </div>
 
                 <div className="mb-3 d-flex">
