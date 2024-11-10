@@ -65,14 +65,12 @@ export const _call_openai = async (report, skills) => {
 }
 
 export const _match_nurse = async (requiredSkills) => {
-    console.log(requiredSkills);
     const params = {
         TableName: "Nurse"
     };
 
     try {
         const { Items } = await dynamoDB.scan(params).promise();
-        console.log(Items);
         const rankedNurses = Items.map(nurse => {
             const nurseSkills = nurse.skills.SS || [];
             const matchingSkills = nurseSkills.filter(skill => requiredSkills.includes(skill));
@@ -86,7 +84,6 @@ export const _match_nurse = async (requiredSkills) => {
         });
 
         rankedNurses.sort((a, b) => b.matchPercentage - a.matchPercentage);
-        console.log(rankedNurses);
         return {
             message: "success",
             matches: rankedNurses[0]

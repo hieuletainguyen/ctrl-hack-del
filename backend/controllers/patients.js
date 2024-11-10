@@ -7,13 +7,12 @@ import { v4 as uuidv4 } from "uuid";
 import AWS from "aws-sdk";
 import { _decode_token } from "../helper/helper.js";
 import { _call_openai, _match_nurse } from "../helper/helper.js";
-
 dotenv.config();
 
 AWS.config.update({ region: "us-east-2"})
 
 const addPatient = async (req, res) => {
-    const {report, patient_id} = req.body;
+    const {report, patientName} = req.body;
     const cookie = req.cookies;
 
     // const decoded = await _decode_token(cookie.token);
@@ -22,11 +21,11 @@ const addPatient = async (req, res) => {
     // }
 
     // get all skills required 
-    const params = {
+    const paramsGetSkills = {
         TableName: "Skill"
     };
     
-    const skills = await dynamoDB.scan(params).promise().then((data) => {
+    const skills = await dynamoDB.scan(paramsGetSkills).promise().then((data) => {
         if (data.Items) {
             const skills = data.Items.map((item) => {
                     return Object.keys(item).reduce((acc, key) => {
@@ -41,26 +40,124 @@ const addPatient = async (req, res) => {
     let resultTreatment = await _call_openai(report, skills);
     resultTreatment = JSON.parse(resultTreatment);
     const resultNurse = await _match_nurse(resultTreatment.skills);
+    console.log(resultNurse);
+    const paramsAddPatient = {
+        TableName: "Patient",
+        Item: {
+            id: {S: uuidv4()},
+            patientName: {S: patientName},
+            report: {S: report},
+            treatment: {SS: resultTreatment.skills},
+            nurse: {N: resultNurse.matches.nurseId},
+            createdAt: {S: new Date().toISOString()}
+        }
+    }
 
-    
-
+    await dynamoDB.putItem(paramsAddPatient).promise().then((data) => {
+        return res.status(200).json({
+            message: "success",
+            data: data
+        });
+    }).catch((err) => {
+        return res.status(400).json({
+            message: "error",
+            data: err
+        });
+    });
 
 }
 
-const getPatient = (req, res) => {
+const getPatient = async (req, res) => {
+    const {patientId} = req.params;
 
+    const paramsGetPatient = {
+        TableName: "Patient",
+        Key: {
+            id: {S: patientId}
+        }
+    }
+
+    await dynamoDB.getItem(paramsGetPatient).promise().then((data) => {
+        return res.status(200).json({
+            message: "success",
+            data: data.Item
+        });
+    }).catch((err) => {
+        return res.status(400).json({
+            message: "error",
+            data: err
+        });
+    });
 }
 
-const updatePatient = (req, res) => {
+const updatePatient = async (req, res) => {
+    const {patientId} = req.params;
+    const {report, patientName} = req.body;
 
+    const paramsUpdatePatient = {
+        TableName: "Patient",
+        Key: {
+            id: {S: patientId}
+        },
+        UpdateExpression: "set report = :report, patientName = :patientName",
+        ExpressionAttributeValues: {
+            ":report": {S: report},
+            ":patientName": {S: patientName}
+        }
+    }
+
+    await dynamoDB.updateItem(paramsUpdatePatient).promise().then((data) => {
+        return res.status(200).json({
+            message: "success",
+            data: data
+        });
+    }).catch((err) => {
+        return res.status(400).json({
+            message: "error",
+            data: err
+        });
+    });
 }
 
-const deletePatient = (req, res) => {
+const deletePatient = async (req, res) => {
+    const {patientId} = req.params;
 
+    const paramsDeletePatient = {
+        TableName: "Patient",
+    }
+
+    await dynamoDB.deleteItem(paramsDeletePatient).promise().then((data) => {
+        return res.status(200).json({
+            message: "success",
+            data: data
+        });
+    }).catch((err) => {
+        return res.status(400).json({
+            message: "error",
+            data: err
+        });
+    });
 }
 
-const recentPatient = (req, res) => {
+const recentPatient = async (req, res) => {
+    const paramsRecentPatient = {
+        TableName: "Patient",
+        Limit: 15,
+        ScanIndexForward: false,
+        IndexName: "createdAt-index"
+    }   
 
+    await dynamoDB.scan(paramsRecentPatient).promise().then((data) => {
+        return res.status(200).json({
+            message: "success",
+            data: data.Items
+        });
+    }).catch((err) => {
+        return res.status(400).json({
+            message: "error",
+            data: err
+        });
+    });
 }
 
 export {
