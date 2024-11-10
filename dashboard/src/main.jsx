@@ -4,6 +4,7 @@ import './index.css'
 import {createBrowserRouter, RouterProvider} from "react-router-dom"
 import {AccountProvider} from "./lib/account"
 import Dashboard from "./dashboard"
+import SignIn from "./SignIn"
 
 const router = createBrowserRouter([
     {
@@ -16,7 +17,7 @@ const router = createBrowserRouter([
     },
     {
         path: "/signin",
-        element: <div>Sign in</div>
+        element: <SignIn />
     }
 ])
 
