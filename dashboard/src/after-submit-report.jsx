@@ -10,7 +10,7 @@ const AfterSubmitReport = () => {
     const [skills, setSkills] = useState([])
     const [nurse, setNurse] = useState(null)
     const {authenticatedFetch} = useContext(AccountContext)
-
+    
     useEffect(() => {
         authenticatedFetch("/patients/submit-report", {
             method: "POST",
