@@ -7,7 +7,7 @@ dotenv.config();
 
 const jwtSecretkey = process.env.JWT_SECRET_KEY;
 
-export const _decode_token = (token) => {
+export const _decode_token = async (token) => {
     // return new Promise((resolve, reject) => {
     //     jwt.verify(token, jwtSecretkey, (err, decoded) => {
     //         if (err) {
@@ -38,7 +38,7 @@ export const _decode_token = (token) => {
     //     });
     // });
 
-    const decodedResult = jwt.verify(token, jwtSecretkey, (err, decoded) => {
+    const decodedResult = await jwt.verify(token, jwtSecretkey, async (err, decoded) => {
         if (err) {
             return { message: "Invalid token" };
         }
@@ -50,7 +50,7 @@ export const _decode_token = (token) => {
             }
         };
 
-        dynamoDB.getItem(params, (err, data) => {
+        const data = await dynamoDB.getItem(params).promise().then((data) => {
             if (err) {
                 return { message: err };
             }
@@ -61,6 +61,7 @@ export const _decode_token = (token) => {
             
             return { message: "success", userId: decoded.userId };
         });
+        return data;
     });
 
     return decodedResult;

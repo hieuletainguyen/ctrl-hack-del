@@ -176,7 +176,7 @@ const getAccount = async (req, res) => {
                 id: { S: tokenData.userId }
             }
         };
-
+        console.log(params);
         dynamoDB.getItem(params, (err, data) => {
             if (err) {
                 return res.json({ message: err });
