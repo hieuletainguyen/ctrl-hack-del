@@ -13,6 +13,7 @@ export const NurseNavItem = ({id}) => {
     }, [id])
 
     if (nurse) {
+        console.log(nurse)
         return (
             <div style={{
                 listStyle: "none",

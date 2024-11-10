@@ -113,14 +113,17 @@ export default () => {
 
     useEffect(() => {
         const url = id ? `/nurses/get-nurse/${id}` : "/nurses/get-nurse"
+        console.log(url)
         authenticatedFetch(url).then(res => {
             res?.accepted && setNurses(res.content);
+            console.log(res.content)
         })
     }, [])
 
     return (
-        
         <NavigationLayout buttons={[<button>Skills</button>]}>
+            {console.log(nurses)}
+            {console.log(id)}
             {id ? <Profile nurse={nurses?.find(n => n.id === id)} auth={authenticatedFetch} /> : 
               <div style={{
                 backdropFilter: "blur(8px)",
