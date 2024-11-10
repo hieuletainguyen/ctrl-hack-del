@@ -72,7 +72,7 @@ export default () => {
             <section id="popup-container">
                 <div id="patients">
                     <div className="flex-row stretch-items">
-                        <input className="grow-3" type="text" placeholder="Find patient" onChange={
+                        <input className="grow-3 rounded" type="text" placeholder="Find patient" onChange={
                             e => setQuery(e.target.value)
                         } />
                         <button className="flex-row compact" onClick={showPopUp}><FaSquarePlus /> New Patient</button>
