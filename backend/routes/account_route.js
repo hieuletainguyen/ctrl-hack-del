@@ -19,9 +19,9 @@ router.post("/accounts/auth",
 
 router.post("/accounts/logout", account.logout);
 
-router.post("/accounts/decode_token", account.decode_token);
+router.post("/accounts/decode-token", account.decode_token);
 
-router.get("/accounts/get_account", account.getAccount);
+router.get("/accounts/get-account", account.getAccount);
 
 export default router;
 
