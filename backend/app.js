@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import account_routes from "./routes/account_route.js";
@@ -5,16 +6,13 @@ import patient_routes from "./routes/patient_route.js";
 import nurse_routes from "./routes/nurse_route.js";
 import skill_routes from "./routes/skill_route.js";
 import cookieParser from 'cookie-parser';
-import dotenv from "dotenv";
-
-dotenv.config();
 
 const app = express();
 
 const port = 9897;
 
 var corsOptions = {
-  origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+  origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
   credentials: true,
   optionsSuccessStatus: 204
 }

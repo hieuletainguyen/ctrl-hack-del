@@ -88,7 +88,7 @@ const authentication = async (req, res) => {
 
     dynamoDB.scan(params, async (err, data) => {
         if (err) {
-            return res.json({message: err});
+            return res.status(500).json({message: err});
         } 
 
         if (!data.Items) {

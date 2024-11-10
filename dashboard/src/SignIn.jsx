@@ -1,13 +1,17 @@
 import './SignIn.css';
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
+import { AccountContext, AccountProvider } from "./lib/account";
+import { useNavigate } from "react-router-dom";
 
-export default function SignIn() {
+function SignIn() {
   
   // Initialize state for username, password, and error message
-  const [username, setUsername] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [error, setError] = useState<string>("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const {account, signIn} = useContext(AccountContext);
+  const navigate = useNavigate();
 
   // Handle change for username input
   const handleUsernameChange = (event) => {
@@ -28,8 +32,16 @@ export default function SignIn() {
       setError("Both username and password are required.");
     } else {
       setError(""); // Clear error if inputs are valid
-      alert(`Username: ${username} \nPassword: ${password}`); // Display user data in an alert
+      // alert(`Username: ${username} \nPassword: ${password}`); // Display user data in an alert
     }
+
+    signIn(username, password)
+      .then(successful => {
+        if (successful)
+          navigate("/");
+        else
+          alert("Incorrect username or password.");
+      });
   };
 
   return (
@@ -105,5 +117,9 @@ export default function SignIn() {
   );
 }
 
-
+export default () => (
+  <AccountProvider>
+    <SignIn />
+  </AccountProvider>
+)
 

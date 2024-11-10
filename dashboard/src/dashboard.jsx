@@ -37,7 +37,7 @@ export default () => {
     })
 
     return (
-        <NavigationLayout buttons={<Link to="/nurses">Manage Team</Link>}>
+        <NavigationLayout buttons={<Link to="/team">Manage Team</Link>}>
             <section>
                 <div className="flex-row stretch-items">
                     <input className="grow-3" type="text" placeholder="Find patient" onChange={
