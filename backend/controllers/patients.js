@@ -34,9 +34,8 @@ const addPatient = async (req, res) => {
 
 const submitReport = async (req, res) => {
     const {report, patientId} = req.body;
-    const cookie = req.cookies;
-
-    const decoded = await _decode_token(cookie.token);
+    const token = req.cookies.TOKENS;
+    const decoded = await _decode_token(token);
     if (decoded.message === "Invalid token") {
         return res.status(401).json({ message: "Invalid token" });
     }
@@ -47,7 +46,6 @@ const submitReport = async (req, res) => {
             id: {S: patientId}
         }
     }
-
     const patientInfo = await dynamoDB.getItem(paramsGetPatient).promise().then((data) => {
         if (data.Item) {
             data.Item = Object.keys(data.Item).reduce((acc, key) => {
@@ -58,7 +56,6 @@ const submitReport = async (req, res) => {
         return data.Item;
     });
 
-    console.log(patientInfo);
 
     // get all skills required =============================
     const paramsGetSkills = {
@@ -78,11 +75,9 @@ const submitReport = async (req, res) => {
     });
 
     //==========================================================
-
     let resultTreatment = await _call_openai(report, skills);
     resultTreatment = JSON.parse(resultTreatment);
     const resultNurse = await _match_nurse(resultTreatment.skills);
-    console.log(resultNurse);
     const paramsAddPatient = {
         TableName: "Patient",
         Item: {
@@ -93,7 +88,7 @@ const submitReport = async (req, res) => {
             email: {S: patientInfo.email},
             report: {S: report},
             treatment: {SS: resultTreatment.skills},
-            nurse: {N: resultNurse.matches.nurseId},
+            nurse: {S: resultNurse.matches.nurseId},
             createdAt: {S: new Date().toISOString()}
         }
     }
@@ -112,21 +107,33 @@ const submitReport = async (req, res) => {
 
 }
 
-const getPatient = async (req, res) => {
-    const {patientId} = req.params;
+const getPatientByName = async (req, res) => {
+    const {patientName} = req.params;
 
     const paramsGetPatient = {
-        TableName: "Patient",
-        Key: {
-            id: {S: patientId}
+        TableName: 'Patient',
+        FilterExpression: '#patientName = :patientNameValue',
+        ExpressionAttributeNames: {
+            '#patientName': 'patientName'
+        },
+        ExpressionAttributeValues: {
+            ':patientNameValue': { S: patientName }
         }
-    }
+    };
 
-    await dynamoDB.getItem(paramsGetPatient).promise().then((data) => {
-        return res.status(200).json({
-            message: "success",
-            data: data.Item
-        });
+    await dynamoDB.scan(paramsGetPatient).promise().then((data) => {
+        if (data.Items) {
+            data.Items = data.Items.map((item) => {
+                return Object.keys(item).reduce((acc, key) => {
+                    acc[key] = item[key].S || item[key].N || item[key].BOOL;
+                    return acc;
+                }, {});
+            });
+            return res.status(200).json({
+                message: "success",
+                data: data.Items
+            });
+        }
     }).catch((err) => {
         return res.status(400).json({
             message: "error",
@@ -150,6 +157,7 @@ const updatePatient = async (req, res) => {
             ":patientName": {S: patientName}
         }
     }
+    console.log(paramsUpdatePatient);
 
     await dynamoDB.updateItem(paramsUpdatePatient).promise().then((data) => {
         return res.status(200).json({
@@ -210,7 +218,7 @@ const recentPatient = async (req, res) => {
 
 export {
     addPatient,
-    getPatient,
+    getPatientByName,
     updatePatient,
     deletePatient,
     recentPatient,

@@ -40,6 +40,12 @@ const getNurse = async (req, res) => {
 
 const updateNurse = async (req, res) => {
     const { id, nurseName, skills } = req.body;
+    // example {
+    //     "id": "90e46e0c-9a52-4173-a103-e98111e9ab74",
+    //     "nurseName": "Hirano",
+    //     "skills": ["Catheter Care"]
+    // }
+    
     const paramsUpdateNurse = {
         TableName: "Nurse",
         Key: {

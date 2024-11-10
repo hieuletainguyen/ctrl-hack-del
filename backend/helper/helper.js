@@ -75,8 +75,8 @@ export const _match_nurse = async (requiredSkills) => {
             const nurseSkills = nurse.skills.SS || [];
             const matchingSkills = nurseSkills.filter(skill => requiredSkills.includes(skill));
             const result = {
-                nurseId: nurse.id.N,
-                name: nurse.name.S,
+                nurseId: nurse.id.S,
+                name: nurse.nurseName.S,
                 matchPercentage: (matchingSkills.length / requiredSkills.length) * 100,
                 matchingSkills: matchingSkills
             };

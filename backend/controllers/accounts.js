@@ -14,7 +14,7 @@ AWS.config.update({ region: "us-east-2"})
 const jwtSecretkey = process.env.JWT_SECRET_KEY;
 
 const generate_salt = async () => {
-    const saltRounds = process.env.SALT_ROUNDS;
+    const saltRounds = parseInt(process.env.SALT_ROUNDS);
     const new_salt = bcrypt.genSalt(saltRounds);
     return new_salt;
 }
@@ -43,7 +43,7 @@ const addAccount = async (req, res) => {
                 console.log("Error for getting item", err)
             } 
 
-            if (data) {
+            if (data.Items.length > 0) {
                 return res.status(400).json({message: "Username already exists"})
             }
         
@@ -111,7 +111,7 @@ const authentication = async (req, res) => {
 
             dynamoDB.putItem(addingParams, (err, data) => {
                 if (err) {
-                    return res.json({message: "Error during adding"})
+                    return res.status(500).json({message: "Error during adding"})
                 } else {
                     res.cookie("TOKENS", token, {httpOnly: true, secure: true, maxAge: 1000 * 60 * 60 * 5});
                     return res.status(200).json({message: "success"})
