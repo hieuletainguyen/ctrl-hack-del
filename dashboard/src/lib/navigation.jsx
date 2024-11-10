@@ -2,6 +2,7 @@ import {Link} from "react-router-dom"
 import {FaHouse, FaCircleArrowLeft, FaCircleUser} from "react-icons/fa6"
 import {IconContext} from "react-icons"
 import "../index.css"
+import {AccountProvider} from "./account"
 
 const Back = ({to}) => (
     <Link className="flex-row compact" to={to ?? "/"}>
@@ -12,16 +13,18 @@ const Back = ({to}) => (
 
 export default ({children, backURL, buttons}) => {
     return (
-        <IconContext.Provider value={{size: "2em"}}>
-            <div className="navigation-container">
-                <div className="navigation-bar">
-                    <Back to={backURL} />
-                    <span className="spacer"></span>
-                    {buttons}
-                    <Link to="/account"><FaCircleUser /></Link>
+        <AccountProvider ensure>
+            <IconContext.Provider value={{size: "2em"}}>
+                <div className="navigation-container">
+                    <div className="navigation-bar">
+                        <Back to={backURL} />
+                        <span className="spacer"></span>
+                        {buttons}
+                        <Link to="/account"><FaCircleUser /></Link>
+                    </div>
+                    {children}
                 </div>
-                {children}
-            </div>
-        </IconContext.Provider>
+            </IconContext.Provider>
+        </AccountProvider>
     )
 }
