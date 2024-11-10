@@ -104,9 +104,11 @@ section {
     gap: 20px;
     margin: 35px;
     margin-bottom: 0;
-    background: #eee;
+    background: rgba(238, 238, 238, 0.419);
+    backdrop-filter: blur(8px); /* Applies the blur effect */
     padding: 25px;
     border-radius: 10px;
+    
 }
 
 input[type=text], input[type=password] {
@@ -119,9 +121,14 @@ button {
     padding: 10px;
 
     &:hover {
+        background-color: #005bb5; /* Change background color on hover */
+        transform: scale(1.05); /* Slightly enlarge the button */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Add a shadow effect */
     }
 
-    &:focus, &:focus-invisible {
+    &:focus, &:focus-visible {
+        outline: none; /* Remove the default focus outline */
+        border: 2px solid #005bb5; /* Add a border on focus */
     }
 }
 
