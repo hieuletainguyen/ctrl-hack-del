@@ -8,35 +8,62 @@ dotenv.config();
 const jwtSecretkey = process.env.JWT_SECRET_KEY;
 
 export const _decode_token = (token) => {
-    return new Promise((resolve, reject) => {
-        jwt.verify(token, jwtSecretkey, (err, decoded) => {
-            if (err) {
-                reject({ message: "Invalid token" });
-                return;
+    // return new Promise((resolve, reject) => {
+    //     jwt.verify(token, jwtSecretkey, (err, decoded) => {
+    //         if (err) {
+    //             reject({ message: "Invalid token" });
+    //             return;
+    //         }
+
+    //         const params = {
+    //             TableName: "Token",
+    //             Key: {
+    //                 token: { S: token }
+    //             }
+    //         };
+
+    //         dynamoDB.getItem(params, (err, data) => {
+    //             if (err) {
+    //                 reject({ message: err });
+    //                 return;
+    //             }
+                
+    //             if (Object.keys(data).length === 0) {
+    //                 reject({ message: "Invalid token" });
+    //                 return;
+    //             }
+                
+    //             resolve({ message: "success", userId: decoded.userId });
+    //         });
+    //     });
+    // });
+
+    jwt.verify(token, jwtSecretkey, (err, decoded) => {
+        if (err) {
+            return { message: "Invalid token" };
+        }
+
+        const params = {
+            TableName: "Token",
+            Key: {
+                token: { S: token }
             }
+        };
 
-            const params = {
-                TableName: "Token",
-                Key: {
-                    token: { S: token }
-                }
-            };
-
-            dynamoDB.getItem(params, (err, data) => {
-                if (err) {
-                    reject({ message: err });
-                    return;
-                }
-                
-                if (Object.keys(data).length === 0) {
-                    reject({ message: "Invalid token" });
-                    return;
-                }
-                
-                resolve({ message: "success", userId: decoded.userId });
-            });
+        dynamoDB.getItem(params, (err, data) => {
+            if (err) {
+                return { message: err };
+            }
+            
+            if (Object.keys(data).length === 0) {
+                return { message: "Invalid token" };
+            }
+            
+            return { message: "success", userId: decoded.userId };
         });
     });
+
+
 };
 
 export const _call_openai = async (report, skills) => {
