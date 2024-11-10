@@ -4,7 +4,7 @@ import "./PopUp.css";
 import { baseURL } from "./lib/config";
 import { useNavigate } from "react-router-dom";
 
-export default function PopUp() {
+export default function PopUp({close}) {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: "",
@@ -49,7 +49,6 @@ export default function PopUp() {
   }
 
   return (
-    <div className="main-container">      
         <div
           className="modal"
           tabIndex={-1} 
@@ -59,12 +58,6 @@ export default function PopUp() {
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">Add Patient</h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={toggleModal}
-                  aria-label="Close"
-                />
               </div>
               <div className="modal-body">
                 <div className="mb-3 d-flex">
@@ -129,7 +122,7 @@ export default function PopUp() {
                 <button
                   type="button"
                   className="btn btn-secondary"
-                  onClick={toggleModal}
+                  onClick={close}
                 >
                   Close
                 </button>
@@ -140,7 +133,5 @@ export default function PopUp() {
             </div>
           </div>
         </div>
-      
-    </div>
   );
 }
