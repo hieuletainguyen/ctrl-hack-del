@@ -4,7 +4,7 @@ import './index.css'
 import {createBrowserRouter, RouterProvider} from "react-router-dom"
 import Dashboard from "./dashboard"
 import SignIn from "./SignIn"
-import NurseProfile from "./nurse-profile"  
+import Team from "./team"
 import AfterSubmitReport from "./after-submit-report"
 import SubmitReport from "./submit-report"
 import PopUp from "./PopUp"
@@ -28,19 +28,19 @@ const router = createBrowserRouter([
                 element: <SignIn />
             },
             {
-                path: "/nurse",
-                element: <NurseProfile />
+                path: "team/:id?",
+                element: <Team />
             },
             {
-                path: "/after-submit-report",
+                path: "after-submit-report",
                 element: <AfterSubmitReport />
             },
             {
-                path: "/submit-report",
+                path: "submit-report",
                 element: <SubmitReport />
             },
             {
-                path: "/popup",
+                path: "popup",
                 element: <PopUp />
             }
         ]

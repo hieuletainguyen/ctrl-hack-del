@@ -5,7 +5,7 @@ import "../index.css"
 import {AccountContext} from "./account"
 import {useContext} from "react"
 
-export default ({children, backURL, buttons}) => {
+export default ({children, backURL, title, buttons}) => {
     const {useAccount} = useContext(AccountContext)
     const account = useAccount()
 
@@ -17,6 +17,7 @@ export default ({children, backURL, buttons}) => {
                         {backURL ? <FaCircleArrowLeft /> : <FaHouse />}
                         {backURL ? "Back" : "Home"}
                     </Link>
+                    <h2>{title}</h2>
                     <span className="spacer"></span>
                     {buttons}
                     <Link className="flex-row compact" to="/account">

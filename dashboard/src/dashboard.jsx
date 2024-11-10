@@ -1,4 +1,4 @@
-import {Link} from "react-router-dom"
+import {Link, useNavigate} from "react-router-dom"
 import {FaSquarePlus} from "react-icons/fa6"
 import NavigationLayout from "./lib/navigation"
 import {useContext, useEffect, useState} from "react"
@@ -29,7 +29,6 @@ export default () => {
     const {authenticatedFetch} = useContext(AccountContext)
     const patient = query ? searchResult : recent
 
-    console.log(recent)
     useEffect(() => {
         authenticatedFetch("/patients/recent-patient")
             .then(res => {
@@ -56,7 +55,11 @@ export default () => {
                 <h2>{query ? `Results for: ${query}` : "Recent Patients"}</h2>
                 <ol className="p-0">
                     {patient.map(p => (
-                        <li className="navitem" key={p.id}>{p.patientName}</li>
+                        <li className="navitem" key={p.id}>
+                            <Link to="submit-report" state={{patientId: p.id, patientName: p.patientName}}>
+                                {p.patientName}
+                            </Link>
+                        </li>
                     ))}
                 </ol>
             </section>

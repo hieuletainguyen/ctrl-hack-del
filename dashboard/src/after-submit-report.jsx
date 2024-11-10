@@ -1,45 +1,43 @@
 import NavigationLayout from "./lib/navigation";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { baseURL } from "./lib/config";
+import { useState, useEffect, useContext } from "react";
+import {AccountContext} from "./lib/account"
+import {NurseNavItem} from "./lib/component"
 
 const AfterSubmitReport = () => {
-    const navigate = useNavigate();
-    const { patientName, patientId } = useLocation().state;
-    const [category, setCategory] = useState([]);
-    const [matchingNurseId, setMatchingNurseId] = useState({});
-    const [matchingNurse, setMatchingNurse] = useState({});
+    const navigate = useNavigate()
+    const {patient, patientName, report} = useLocation().state
+    const [skills, setSkills] = useState([])
+    const [nurse, setNurse] = useState(null)
+    const {authenticatedFetch} = useContext(AccountContext)
 
     useEffect(() => {
-        const fetchData = async () => {
-            const response = await fetch(`${baseURL}/patients/get-patient/${patientId}`, {
-                credentials: "include",
-            });
-            const data = await response.json();
-            setCategory(data.treatment);
-            setMatchingNurseId(data.nurse);
-            console.log(data);
-        };
-        fetchData();
-    }, []);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const response = await axios.get(`${process.env.REACT_APP_API_URL}/nurses/get-nurse/${matchingNurseId}`);
-            setMatchingNurse(response.data);
-        };
-        fetchData();
-    }, [matchingNurseId]);
+        authenticatedFetch("/patients/submit-report", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({patientId: patient, report})
+        })
+            .then(res => {
+                if (res?.accepted) {
+                    setSkills(res.content.skills)
+                    setNurse(res.content.nurse)
+                }
+            })
+    }, [])
 
     return (
         <NavigationLayout>
-            <div>
-                <h1>Matching Nurse Result</h1>
-                <p>Category: {category}</p>
-                <button onClick={() => {
-                    navigate(`/nurse`, { state: { nurseName: matchingNurse.name, skills: matchingNurse.skills } });
-                }}>View Nurse Profile</button>
-            </div>
+            <h1>Match result for: {patientName}</h1>
+            <section>
+                <div>The following skillset is selected based on your report:</div>
+                <h2>{skills.join(", ")}.</h2>
+            </section>
+            <section>
+                <div>Best Match</div>
+                <NurseNavItem id={nurse} />
+            </section>
         </NavigationLayout>
     );
 }

@@ -116,7 +116,10 @@ const submitReport = async (req, res) => {
     await dynamoDB.putItem(paramsAddPatient).promise().then((data) => {
         return res.status(200).json({
             message: "success",
-            data: data
+            data: {
+                nurse: resultNurse.matches.nurseId,
+                skills: resultTreatment.skills
+            }
         });
     }).catch((err) => {
         return res.status(400).json({

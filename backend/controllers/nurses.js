@@ -38,9 +38,20 @@ const getNurse = async (req, res) => {
         return res.status(401).json({message: "No authentication token found"});
     }
 
-    const paramsGetNurse = {
+    let paramsGetNurse = {
         TableName: "Nurse"
     }
+    if (req.params.id)
+        paramsGetNurse = {
+            ...paramsGetNurse,
+            FilterExpression: '#id = :id',
+            ExpressionAttributeNames: {
+                '#id': 'id'
+            },
+            ExpressionAttributeValues: {
+                ':id': {S: req.params.id}
+            }
+        }
 
     await dynamoDB.scan(paramsGetNurse).promise().then((data) => {
         data.Items = data.Items.map((item) => {
@@ -54,7 +65,7 @@ const getNurse = async (req, res) => {
             data: data.Items
         });
     }).catch((err) => {
-        return res.status(400).json({message: "error"});
+        return res.status(400).json({message: err});
     });
 }
 

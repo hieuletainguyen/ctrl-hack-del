@@ -10,27 +10,10 @@ const SubmitReport = () => {
     const navigate = useNavigate();
 
     const handleSubmit = () => {
-        const submitReport = async () => {
-            console.log(report, patientId, patientName);
-            const response = await fetch(`${baseURL}/patients/submit-report`, {
-                method: "POST",
-                credentials: "include",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({report, patientId})
-            });
-            const data = await response.json();
-            if (data.message === "success") {
-                navigate("/after-submit-report", { state: { patientName, patientId } });
-            } else {
-                alert("Failed to submit report");
-            }
-        }
-        submitReport();
+        navigate("/after-submit-report", {state: {patient: patientId, patientName, report}});
     }
     return (
-        <NavigationLayout patientName={patientName}>
+        <NavigationLayout title={patientName}>
             <div>
                 <textarea value={report} onChange={(e) => setReport(e.target.value)}></textarea>
             </div>
