@@ -103,7 +103,7 @@
     width: 642px;
     height: 10px;
     margin: 15px 0 0 82px;
-    background: url(../assets/images/2396161c-d7ab-4d53-b9cc-55a91ed62fce.png)
+    background: url(../assets/signin.png)
       no-repeat center;
     background-size: cover;
     z-index: 3;
@@ -144,18 +144,19 @@
     flex-wrap: nowrap;
     gap: 8px;
     position: relative;
-    width: 550px;
+    width: 100%; /* Set to 100% to adjust width to the container */
+    max-width: 550px; /* Optional: set a max-width */
     height: 75px;
-    margin: 148px 0 0 128px;
-    padding: 16px 24px 16px 24px;
+    padding: 16px 24px; /* Remove extra margins */
     cursor: pointer;
     background: #2d3648;
     border: none;
     z-index: 1;
-    overflow: hidden;
     border-radius: 20px;
     box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+    margin: 0 auto; /* Center horizontally */
   }
+  
   .sign-in-4 {
     flex-shrink: 0;
     flex-basis: auto;

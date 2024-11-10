@@ -3,6 +3,7 @@ import {FaSquarePlus} from "react-icons/fa6"
 import NavigationLayout from "./lib/navigation"
 import {useContext, useEffect, useState} from "react"
 import {AccountContext} from "./lib/account"
+import signinImage from './assets/signin.png'; // Import your background image
 
 const useDebouncedState = (defaultValue) => {
     const [state, setState] = useState(defaultValue)
@@ -47,10 +48,18 @@ export default () => {
     const handleNewPatient = () => {
         navigate("/popup");
     };
+    // Set the background for the entire page
+    useEffect(() => {
+        document.body.style.backgroundImage = `url(${signinImage})`;
+        document.body.style.backgroundSize = "cover";
+        document.body.style.backgroundPosition = "center";
+    }, []);
 
     return (
-        <NavigationLayout buttons={<Link to="/team">Manage Team</Link>}>
+        <NavigationLayout buttons={<Link to="/team" style={{ color: 'white' }}>Manage Team</Link>}>
+
             <section>
+                
                 <div className="flex-row stretch-items">
                     <input className="grow-3" type="text" placeholder="Find patient" onChange={
                         e => setQuery(e.target.value)

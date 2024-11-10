@@ -3,6 +3,8 @@ import React, { useContext, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
 import { AccountContext } from "./lib/account";
 import { useNavigate } from "react-router-dom";
+import signinImage from './assets/signin.png';
+
 
 export default function SignIn() {
   
@@ -92,6 +94,7 @@ export default function SignIn() {
 
           {/* Error message */}
           {error && <div className="text-danger mb-3">{error}</div>}
+          
 
           {/* Custom Button */}
           <button
@@ -106,6 +109,7 @@ export default function SignIn() {
               color: "#fff",
               fontSize: "25px",
               fontWeight: "400",
+              
               letterSpacing: "-0.25px",
             }}
           >
