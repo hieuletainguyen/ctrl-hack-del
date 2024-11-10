@@ -156,6 +156,36 @@ const getPatientByName = async (req, res) => {
     });
 }
 
+const getPatientById = async (req, res) => {
+    const token = req.cookies.TOKENS;
+    const tokenData = await _decode_token(token);
+
+    if (tokenData.message !== "success") {
+        return res.status(401).json({message: "No authentication token found"});
+    }
+
+    const {patientId} = req.params;     
+
+    const paramsGetPatient = {
+        TableName: 'Patient',
+        Key: {
+            id: {S: patientId}
+        }
+    };
+
+    await dynamoDB.getItem(paramsGetPatient).promise().then((data) => { 
+        return res.status(200).json({
+            message: "success",
+            data: data.Item
+        });
+    }).catch((err) => {
+        return res.status(400).json({
+            message: "error",
+            data: err
+        });
+    });
+}
+
 const updatePatient = async (req, res) => {
     const token = req.cookies.TOKENS;
     const tokenData = await _decode_token(token);
@@ -257,6 +287,7 @@ export {
     updatePatient,
     deletePatient,
     recentPatient,
-    submitReport
+    submitReport,
+    getPatientById
 }
 
