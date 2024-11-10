@@ -68,7 +68,7 @@ export default () => {
     }, []);
 
     return (
-        <NavigationLayout buttons={<Link to="/team" style={{ color: 'white' }}>Manage Team</Link>}>
+        <NavigationLayout buttons={<Link to="/team" style={{ color: 'white', textDecoration: 'none' }}>Manage Team</Link>}>
             <section id="popup-container">
                 <div id="patients">
                     <div className="flex-row stretch-items">

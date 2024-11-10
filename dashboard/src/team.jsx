@@ -28,11 +28,13 @@ const List = ({nurses}) => {
 }
 
 const Profile = ({nurse, auth}) => {
+    console.log("nurse")
+    console.log(nurse.skills)
     const [skills, setSkills] = useState([]);
     const [edit, setEdit] = useState(false);
     const [fullName, setFullName] = useState(nurse.nurseName);
     const [selectedSkill, setSelectedSkill] = useState("");
-    const [nurseSkills, setNurseSkills] = useState(nurse.skills);
+    const [nurseSkills, setNurseSkills] = useState(nurse.skills || []);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -80,7 +82,7 @@ const Profile = ({nurse, auth}) => {
                 >
                     <option value="">Select a skill</option>
                     {skills
-                        .filter(skill => !nurseSkills?.includes(skill))
+                        .filter(skill => !(nurseSkills || nurse.skills)?.includes(skill))
                         .map(skill => (
                             <option key={skill} value={skill}>
                                 {skill}
@@ -96,7 +98,8 @@ const Profile = ({nurse, auth}) => {
             <div>
                 <h3>Current Skills:</h3>
                 <ul>
-                    {nurseSkills?.map(skill => (
+                    {(nurseSkills && nurse.skills)?.length === 0 ? <li>No skills</li> 
+                    : (nurseSkills?.length ? nurseSkills : nurse.skills)?.map(skill => (
                         <li key={skill}>{skill}</li>
                     ))}
                 </ul>
@@ -110,21 +113,29 @@ export default () => {
     const {id} = useParams()
     const {authenticatedFetch} = useContext(AccountContext)
     const [nurses, setNurses] = useState(null)
+    const navigate = useNavigate()
 
     useEffect(() => {
         const url = id ? `/nurses/get-nurse/${id}` : "/nurses/get-nurse"
         console.log(url)
         authenticatedFetch(url).then(res => {
             res?.accepted && setNurses(res.content);
-            console.log(res.content)
         })
-    }, [])
+    }, [id, authenticatedFetch])
+
+    const getNurseById = async () => {
+        const result = await authenticatedFetch(`/nurses/get-nurse/${id}`).then(res => {
+            res?.accepted && setNurses(res.content);
+            return res.content
+        })
+        return result[0]
+    }
 
     return (
-        <NavigationLayout buttons={[<button>Skills</button>]}>
-            {console.log(nurses)}
-            {console.log(id)}
-            {id ? <Profile nurse={nurses?.find(n => n.id === id)} auth={authenticatedFetch} /> : 
+        <NavigationLayout buttons={[<button onClick={() => navigate("/skills")}>Skills</button>]}>
+            {
+            (id && nurses?.find(n => n.id === id)) ?  <Profile nurse={nurses?.find(n => n.id === id)} auth={authenticatedFetch} /> : 
+            (id && !nurses?.find(n => n.id === id)) ?  <Profile nurse={getNurseById()} auth={authenticatedFetch} /> :
               <div style={{
                 backdropFilter: "blur(8px)",
                 padding: "25px",
