@@ -4,6 +4,7 @@ import NavigationLayout from "./lib/navigation"
 import {useContext, useEffect, useState} from "react"
 import {AccountContext} from "./lib/account"
 import signinImage from './assets/signin.png'; // Import your background image
+import PopUp from "./PopUp"
 
 const useDebouncedState = (defaultValue) => {
     const [state, setState] = useState(defaultValue)
@@ -45,9 +46,20 @@ export default () => {
         }
     }, [query])
 
-    const handleNewPatient = () => {
-        navigate("/popup");
+    const showPopUp = () => {
+        document.querySelector("#popup-container").classList.remove("popup-transition-in")
+        document.querySelector("#popup-container").classList.add("popup-transition-out")
+        setTimeout(() => document.querySelector("#patients").classList.add("hidden"), 500)
+        setTimeout(() => document.querySelector("#new-patient").classList.remove("hidden"), 500)
     };
+
+    const closePopUp = () => {
+        document.querySelector("#popup-container").classList.remove("popup-transition-out")
+        document.querySelector("#popup-container").classList.add("popup-transition-in")
+        setTimeout(() => document.querySelector("#patients").classList.remove("hidden"), 500)
+        setTimeout(() => document.querySelector("#new-patient").classList.add("hidden"), 500)
+    }
+
     // Set the background for the entire page
     useEffect(() => {
         document.body.style.backgroundImage = `url(${signinImage})`;
@@ -57,25 +69,28 @@ export default () => {
 
     return (
         <NavigationLayout buttons={<Link to="/team" style={{ color: 'white' }}>Manage Team</Link>}>
-
-            <section>
-                
-                <div className="flex-row stretch-items">
-                    <input className="grow-3" type="text" placeholder="Find patient" onChange={
-                        e => setQuery(e.target.value)
-                    } />
-                    <button className="flex-row compact" onClick={handleNewPatient}><FaSquarePlus /> New Patient</button>
+            <section id="popup-container">
+                <div id="patients">
+                    <div className="flex-row stretch-items">
+                        <input className="grow-3" type="text" placeholder="Find patient" onChange={
+                            e => setQuery(e.target.value)
+                        } />
+                        <button className="flex-row compact" onClick={showPopUp}><FaSquarePlus /> New Patient</button>
+                    </div>
+                    <h2>{query ? `Results for: ${query}` : "Recent Patients"}</h2>
+                    <ol className="p-0">
+                        {patient.map(p => (
+                            <li className="navitem" key={p.id}>
+                                <Link to="submit-report" state={{patientId: p.id, patientName: p.patientName}}>
+                                    {p.patientName}
+                                </Link>
+                            </li>
+                        ))}
+                    </ol>
                 </div>
-                <h2>{query ? `Results for: ${query}` : "Recent Patients"}</h2>
-                <ol className="p-0">
-                    {patient.map(p => (
-                        <li className="navitem" key={p.id}>
-                            <Link to="submit-report" state={{patientId: p.id, patientName: p.patientName}}>
-                                {p.patientName}
-                            </Link>
-                        </li>
-                    ))}
-                </ol>
+                <div id="new-patient" className="hidden" style={{height: "510px"}}>
+                    <PopUp close={closePopUp} />
+                </div>
             </section>
         </NavigationLayout>
     )
