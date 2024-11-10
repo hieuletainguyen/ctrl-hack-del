@@ -295,6 +295,7 @@ const recentPatient = async (req, res) => {
                 return acc;
             }, {});
         });
+        data.Items = data.Items.filter((item) => item.patientName !== undefined && item.patientName !== null);
         return res.status(200).json({
             message: "success",
             data: data.Items
