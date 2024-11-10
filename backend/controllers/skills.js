@@ -20,7 +20,7 @@ const addSkill = async (req, res) => {
     await dynamoDB.putItem(paramsAddSkill).promise().then((data) => {
         return res.status(200).json({message: "success", data: data});
     }).catch((err) => {
-        return res.status(400).json({message: "error"});
+        return res.status(400).json({message: "error " + err});
     });
 }
 
@@ -33,13 +33,11 @@ const getSkill = async (req, res) => {
     }
 
     const paramsGetSkill = {
-        TableName: "Skill",
-        Item: {
-            name: {S: skillName}
-        }   
+        TableName: "Skill"
     }
 
     await dynamoDB.scan(paramsGetSkill).promise().then((data) => {
+        data.Items = data.Items.map((item) => item.name.S);
         return res.status(200).json({message: "success", data: data.Items});
     }).catch((err) => {
         return res.status(400).json({message: "error"});

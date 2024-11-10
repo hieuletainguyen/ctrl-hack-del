@@ -8,6 +8,7 @@ import Team from "./team"
 import AfterSubmitReport from "./after-submit-report"
 import SubmitReport from "./submit-report"
 import PopUp from "./PopUp"
+import Skills from "./Skills"
 import {AccountProvider} from "./lib/account"
 
 const router = createBrowserRouter([
@@ -42,6 +43,10 @@ const router = createBrowserRouter([
             {
                 path: "popup",
                 element: <PopUp />
+            },
+            {
+                path: "skills",
+                element: <Skills />
             }
         ]
     }

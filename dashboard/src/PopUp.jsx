@@ -49,17 +49,10 @@ export default function PopUp() {
   }
 
   return (
-    <div className="main-container">
-      {/* Trigger Button to Open Modal */}
-      <button className="btn btn-primary" onClick={toggleModal}>
-        Open Form
-      </button>
-
-      {/* Modal */}
-      {showModal && (
+    <div className="main-container">      
         <div
           className="modal"
-          tabIndex={-1} // This makes the modal element focusable when open
+          tabIndex={-1} 
           style={{ display: "block" }}
         >
           <div className="modal-dialog">
@@ -148,7 +141,7 @@ export default function PopUp() {
             </div>
           </div>
         </div>
-      )}
+      
     </div>
   );
 }
