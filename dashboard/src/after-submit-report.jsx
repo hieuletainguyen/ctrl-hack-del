@@ -7,7 +7,7 @@ const AfterSubmitReport = (props) => {
     const [matchingNurseId, setMatchingNurseId] = useState({});
     const [matchingNurse, setMatchingNurse] = useState({});
 
-    useEffect(async () => {
+    useEffect(() => {
         const fetchData = async () => {
             const response = await axios.get(`${process.env.REACT_APP_API_URL}/patients/get-patient/${patientName}`);
             setCategory(response.data.treatment);
@@ -16,7 +16,7 @@ const AfterSubmitReport = (props) => {
         fetchData();
     }, []);
 
-    useEffect(async () => {
+    useEffect(() => {
         const fetchData = async () => {
             const response = await axios.get(`${process.env.REACT_APP_API_URL}/nurses/get-nurse/${matchingNurseId}`);
             setMatchingNurse(response.data);
