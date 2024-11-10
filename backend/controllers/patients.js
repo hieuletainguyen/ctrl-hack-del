@@ -139,7 +139,7 @@ const getPatientByName = async (req, res) => {
 
     const paramsGetPatient = {
         TableName: 'Patient',
-        FilterExpression: '#patientName = :patientNameValue',
+        FilterExpression: 'contains(#patientName, :patientNameValue)',
         ExpressionAttributeNames: {
             '#patientName': 'patientName'
         },
@@ -274,7 +274,7 @@ const recentPatient = async (req, res) => {
     const token = req.cookies.TOKENS;
     const tokenData = await _decode_token(token);
 
-    if (tokenData.message !== "success") {
+    if (tokenData?.message !== "success") {
         return res.status(401).json({message: "No authentication token found"});
     }
 

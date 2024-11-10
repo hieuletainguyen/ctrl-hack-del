@@ -1,7 +1,8 @@
 import {Link} from "react-router-dom"
 import {FaSquarePlus} from "react-icons/fa6"
 import NavigationLayout from "./lib/navigation"
-import {useEffect, useState} from "react"
+import {useContext, useEffect, useState} from "react"
+import {AccountContext} from "./lib/account"
 
 const useDebouncedState = (defaultValue) => {
     const [state, setState] = useState(defaultValue)
@@ -25,15 +26,23 @@ export default () => {
     const [recent, setRecent] = useState([])
     const [searchResult, setSearchResult] = useState([])
     const [query, setQuery] = useDebouncedState(null)
+    const {authenticatedFetch} = useContext(AccountContext)
+    const patient = query ? searchResult : recent
 
+    console.log(recent)
     useEffect(() => {
-        // Fetch recents.
+        authenticatedFetch("/patients/recent-patient")
+            .then(res => {
+                if (res?.accepted)
+                    setRecent(res.content)
+            })
     }, [])
     useEffect(() => {
         if (query) {
-            // Fetch search results.
+            authenticatedFetch(`/patients/search-patient/${query}`)
+                .then(res => res?.accepted && setSearchResult(res.content))
         }
-    })
+    }, [query])
 
     return (
         <NavigationLayout buttons={<Link to="/team">Manage Team</Link>}>
@@ -44,7 +53,12 @@ export default () => {
                     } />
                     <button className="flex-row compact"><FaSquarePlus /> New Patient</button>
                 </div>
-                {query ? null : <h2>Recent patients</h2>}
+                <h2>{query ? `Results for: ${query}` : "Recent Patients"}</h2>
+                <ol className="p-0">
+                    {patient.map(p => (
+                        <li className="navitem" key={p.id}>{p.patientName}</li>
+                    ))}
+                </ol>
             </section>
         </NavigationLayout>
     )
