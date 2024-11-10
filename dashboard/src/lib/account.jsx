@@ -31,8 +31,10 @@ export const authenticatedFetch = (url, options) => {
             signOut()
             return null
         }
-        else if (res.status == 200)
+        else if (res.status == 200) {
+            console.debug("Request completed.")
             return res
+        }
         else {
             console.error(`Request failed ${res}`)
             alert(`Request failed. ${res.status}`)
