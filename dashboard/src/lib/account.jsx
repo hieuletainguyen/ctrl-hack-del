@@ -1,10 +1,10 @@
 import {createContext, useEffect, useState} from "react"
 import {baseURL} from "./config"
-import {useNavigate} from "react-router-dom"
+import {Outlet, useNavigate} from "react-router-dom"
 
 export const AccountContext = createContext({})
 
-export const AccountProvider = (prop) => {
+export const AccountProvider = () => {
     const [account, setAccount] = useState(null)
     const navigate = useNavigate()
 
@@ -32,20 +32,17 @@ export const AccountProvider = (prop) => {
                 `${baseURL}${url}`,
                 {...options, credentials: "include"}
             )
+            const body = await res.json() ?? {}
             if (res.status >= 400) {
-                console.info("Credentials rejected, signing out.")
-                if (prop.ensure)
-                    signOut()
-                return null
+                console.info("Credentials rejected.")
+                return {accepted: false, content: body.message}
             }
             else if (res.status == 200) {
                 console.debug("Request completed.")
-                return res
+                return {accepted: true, content: body.data}
             }
             else {
-                console.error(`Request failed ${res}`)
-                alert(`Request failed. ${res.status}`)
-                return null
+                throw `Request failed, status=${res.status}, body=${body}`
             }
         })()
     }
@@ -55,36 +52,33 @@ export const AccountProvider = (prop) => {
         navigate("/signin")
     }
 
-    const loadAccount = asyncTry(async () => {
-        const res = await authenticatedFetch("/get_account")
-        if (res)
-            setAccount(await res.json())
-        return true
-    })
+    const useAccount = () => {
+        useEffect(asyncTry(async () => {
+            const res = await authenticatedFetch("/get_account")
+            if (res?.accepted)
+                setAccount(res.content)
+            else
+                signOut()
+        }), [])
+        return account
+    }
 
     const signIn = (username, password) => asyncTry(async () => {
         const res = await fetch(`${baseURL}/auth`, {
+            credentials: "include",
             method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
             body: JSON.stringify({username, password})
         })
-            .catch((error) => {
-                console.error(error)
-                return null
-            })
-        if (res?.status == 200)
-            return await loadAccount()
-        else
-            return false
+        return res?.status == 200
     })()
 
-    useEffect(() => {
-        loadAccount()
-    }, [])
-
     return <AccountContext.Provider value={{
-        account,
+        useAccount,
         signIn,
         signOut,
         authenticatedFetch
-    }}>{prop.children}</AccountContext.Provider>
+    }}><Outlet /></AccountContext.Provider>
 }

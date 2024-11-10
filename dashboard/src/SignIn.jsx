@@ -1,16 +1,16 @@
 import './SignIn.css';
 import React, { useContext, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
-import { AccountContext, AccountProvider } from "./lib/account";
+import { AccountContext } from "./lib/account";
 import { useNavigate } from "react-router-dom";
 
-function SignIn() {
+export default function SignIn() {
   
   // Initialize state for username, password, and error message
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const {account, signIn} = useContext(AccountContext);
+  const {signIn} = useContext(AccountContext);
   const navigate = useNavigate();
 
   // Handle change for username input
@@ -36,8 +36,8 @@ function SignIn() {
     }
 
     signIn(username, password)
-      .then(successful => {
-        if (successful)
+      .then(accepted => {
+        if (accepted)
           navigate("/");
         else
           alert("Incorrect username or password.");
@@ -116,10 +116,3 @@ function SignIn() {
     </div>
   );
 }
-
-export default () => (
-  <AccountProvider>
-    <SignIn />
-  </AccountProvider>
-)
-

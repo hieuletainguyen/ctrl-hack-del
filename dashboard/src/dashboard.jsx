@@ -11,7 +11,6 @@ const useDebouncedState = (defaultValue) => {
     useEffect(() => {
         const update = setInterval(() => {
             if (state == lastState && state != debounced) {
-                console.debug(`Debounced state = ${state}`)
                 setDebounced(state)
             }
             setLastState(state)
@@ -31,9 +30,9 @@ export default () => {
         // Fetch recents.
     }, [])
     useEffect(() => {
-        if (!query)
-            return
-        // Fetch search results.
+        if (query) {
+            // Fetch search results.
+        }
     })
 
     return (

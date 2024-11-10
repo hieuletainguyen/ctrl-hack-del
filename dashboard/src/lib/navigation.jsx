@@ -2,29 +2,30 @@ import {Link} from "react-router-dom"
 import {FaHouse, FaCircleArrowLeft, FaCircleUser} from "react-icons/fa6"
 import {IconContext} from "react-icons"
 import "../index.css"
-import {AccountProvider} from "./account"
-
-const Back = ({to}) => (
-    <Link className="flex-row compact" to={to ?? "/"}>
-        {to ? <FaCircleArrowLeft /> : <FaHouse />}
-        {to ? "Back" : "Home"}
-    </Link>
-)
+import {AccountContext} from "./account"
+import {useContext} from "react"
 
 export default ({children, backURL, buttons}) => {
+    const {useAccount} = useContext(AccountContext)
+    const account = useAccount()
+
     return (
-        <AccountProvider ensure>
-            <IconContext.Provider value={{size: "2em"}}>
-                <div className="navigation-container">
-                    <div className="navigation-bar">
-                        <Back to={backURL} />
-                        <span className="spacer"></span>
-                        {buttons}
-                        <Link to="/account"><FaCircleUser /></Link>
-                    </div>
-                    {children}
+        <IconContext.Provider value={{size: "2em"}}>
+            <div className="navigation-container">
+                <div className="navigation-bar">
+                    <Link className="flex-row compact" to={backURL ?? "/"}>
+                        {backURL ? <FaCircleArrowLeft /> : <FaHouse />}
+                        {backURL ? "Back" : "Home"}
+                    </Link>
+                    <span className="spacer"></span>
+                    {buttons}
+                    <Link className="flex-row compact" to="/account">
+                        <FaCircleUser />
+                        {account?.username}
+                    </Link>
                 </div>
-            </IconContext.Provider>
-        </AccountProvider>
+                {children}
+            </div>
+        </IconContext.Provider>
     )
 }
