@@ -7,6 +7,8 @@ import SignIn from "./SignIn"
 import NurseProfile from "./nurse-profile"  
 import AfterSubmitReport from "./after-submit-report"
 import {AccountProvider} from "./lib/account"
+import NurseProfile from "./nurse-profile"
+import AfterSubmitReport from "./after-submit-report"
 
 const router = createBrowserRouter([
     {

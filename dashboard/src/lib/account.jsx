@@ -53,13 +53,15 @@ export const AccountProvider = () => {
     }
 
     const useAccount = () => {
-        useEffect(asyncTry(async () => {
-            const res = await authenticatedFetch("/get_account")
-            if (res?.accepted)
-                setAccount(res.content)
-            else
-                signOut()
-        }), [])
+        useEffect(() => {
+            authenticatedFetch("/get_account")
+                .then(res => {
+                    if (res?.accepted)
+                        setAccount(res.content)
+                    else
+                        signOut()
+                })
+        }, [])
         return account
     }
 
