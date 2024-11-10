@@ -126,7 +126,7 @@ const getPatientByName = async (req, res) => {
 
     const paramsGetPatient = {
         TableName: 'Patient',
-        FilterExpression: '#patientName = :patientNameValue',
+        FilterExpression: 'contains(#patientName, :patientNameValue)',
         ExpressionAttributeNames: {
             '#patientName': 'patientName'
         },

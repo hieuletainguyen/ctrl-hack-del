@@ -27,7 +27,7 @@ a {
 
 a:hover {
     color: #eee;
-    transition: all 100ms;
+    transition: all 200ms;
 }
 
 body {
@@ -121,5 +121,25 @@ button {
     }
 
     &:focus, &:focus-invisible {
+    }
+}
+
+ol {
+    list-style: none;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+}
+
+li.navitem {
+    padding: 10px;
+    transition: all 200ms;
+
+    &:hover {
+        background: #ccc;
+    }
+
+    & + li.navitem {
+        border-top: 1px solid #ccc;
     }
 }

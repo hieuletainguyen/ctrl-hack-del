@@ -39,9 +39,10 @@ export default () => {
     }, [])
     useEffect(() => {
         if (query) {
-            // Fetch search results.
+            authenticatedFetch(`/patients/search-patient/${query}`)
+                .then(res => res?.accepted && setSearchResult(res.content))
         }
-    })
+    }, [query])
 
     return (
         <NavigationLayout buttons={<Link to="/team">Manage Team</Link>}>
@@ -52,12 +53,12 @@ export default () => {
                     } />
                     <button className="flex-row compact"><FaSquarePlus /> New Patient</button>
                 </div>
-                {query ? null : <h2>Recent patients</h2>}
-                <ul>
+                <h2>{query ? `Results for: ${query}` : "Recent Patients"}</h2>
+                <ol className="p-0">
                     {patient.map(p => (
-                        <li key={p.id}>{p.patientName}</li>
+                        <li className="navitem" key={p.id}>{p.patientName}</li>
                     ))}
-                </ul>
+                </ol>
             </section>
         </NavigationLayout>
     )
