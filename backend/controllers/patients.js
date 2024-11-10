@@ -18,24 +18,37 @@ const addPatient = async (req, res) => {
     if (tokenData.message !== "success") {
         return res.status(401).json({message: "No authentication token found"});
     }
+    console.log(req);
 
-    const {name, dob, phone, email} = req.body;
-
+    const {fullName, dob, phoneNumber, email} = req.body;
+    console.log(req.body);
+    const patientId = uuidv4();
     const paramsAddPatient = {
         TableName: "Patient",
         Item: {
-            id: {S: uuidv4()},
-            patientName: {S: name},
+            id: {S: patientId},
+            patientName: {S: fullName},
             dob: {S: dob},
-            phone: {S: phone},
+            phone: {S: phoneNumber},
             email: {S: email}
         }
     }
+    console.log(paramsAddPatient);
 
     await dynamoDB.putItem(paramsAddPatient).promise().then((data) => {
-        return res.status(200).json({message: "success", data: data});
+        return res.status(200).json({
+            message: "success",
+            data: {
+                ...data,
+                id: patientId,
+                patientName: fullName
+            }
+        });
     }).catch((err) => {
-        return res.status(400).json({message: "error", data: err});
+        return res.status(400).json({
+            message: "error",
+            data: err
+        });
     });
 }
 
@@ -259,7 +272,7 @@ const deletePatient = async (req, res) => {
 
 const recentPatient = async (req, res) => {
     const token = req.cookies.TOKENS;
-    const tokenData = _decode_token(token);
+    const tokenData = await _decode_token(token);
 
     if (tokenData.message !== "success") {
         return res.status(401).json({message: "No authentication token found"});
@@ -271,6 +284,7 @@ const recentPatient = async (req, res) => {
         Select: "ALL_ATTRIBUTES",
         ReturnConsumedCapacity: "TOTAL"
     };   
+
     await dynamoDB.scan(paramsRecentPatient).promise().then((data) => {
         data.Items = data.Items.map((item) => {
             return Object.keys(item).reduce((acc, key) => {

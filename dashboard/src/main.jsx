@@ -6,6 +6,8 @@ import Dashboard from "./dashboard"
 import SignIn from "./SignIn"
 import NurseProfile from "./nurse-profile"  
 import AfterSubmitReport from "./after-submit-report"
+import SubmitReport from "./submit-report"
+import PopUp from "./PopUp"
 import {AccountProvider} from "./lib/account"
 
 const router = createBrowserRouter([
@@ -32,6 +34,14 @@ const router = createBrowserRouter([
             {
                 path: "/after-submit-report",
                 element: <AfterSubmitReport />
+            },
+            {
+                path: "/submit-report",
+                element: <SubmitReport />
+            },
+            {
+                path: "/popup",
+                element: <PopUp />
             }
         ]
     }
