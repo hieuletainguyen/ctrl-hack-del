@@ -4,6 +4,8 @@ import './index.css'
 import {createBrowserRouter, RouterProvider} from "react-router-dom"
 import Dashboard from "./dashboard"
 import SignIn from "./SignIn"
+import NurseProfile from "./nurse-profile"  
+import AfterSubmitReport from "./after-submit-report"
 import {AccountProvider} from "./lib/account"
 
 const router = createBrowserRouter([
