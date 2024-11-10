@@ -43,6 +43,12 @@ const getNurse = async (req, res) => {
     }
 
     await dynamoDB.scan(paramsGetNurse).promise().then((data) => {
+        data.Items = data.Items.map((item) => {
+            return Object.keys(item).reduce((acc, key) => {
+                acc[key] = item[key].S || item[key].N || item[key].BOOL;
+                return acc;
+            }, {});
+        });
         return res.status(200).json({
             message: "success",
             data: data.Items

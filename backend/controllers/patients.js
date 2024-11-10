@@ -174,6 +174,10 @@ const getPatientById = async (req, res) => {
     };
 
     await dynamoDB.getItem(paramsGetPatient).promise().then((data) => { 
+        data.Item = Object.keys(data.Item).reduce((acc, key) => {
+            acc[key] = data.Item[key].S || data.Item[key].N || data.Item[key].BOOL;
+            return acc;
+        }, {});
         return res.status(200).json({
             message: "success",
             data: data.Item
@@ -264,11 +268,16 @@ const recentPatient = async (req, res) => {
     const paramsRecentPatient = {
         TableName: "Patient",
         Limit: 15,
-        ScanIndexForward: false,
-        IndexName: "createdAt-index"
-    }   
-
+        Select: "ALL_ATTRIBUTES",
+        ReturnConsumedCapacity: "TOTAL"
+    };   
     await dynamoDB.scan(paramsRecentPatient).promise().then((data) => {
+        data.Items = data.Items.map((item) => {
+            return Object.keys(item).reduce((acc, key) => {
+                acc[key] = item[key].S || item[key].N || item[key].BOOL;
+                return acc;
+            }, {});
+        });
         return res.status(200).json({
             message: "success",
             data: data.Items
