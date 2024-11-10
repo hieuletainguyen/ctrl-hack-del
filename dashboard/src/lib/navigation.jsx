@@ -15,7 +15,14 @@ export default ({children, backURL, title, buttons}) => {
                 <div className="navigation-bar" style={{ backgroundColor: '#2E5984', padding: '10px' }} // Dark blue background
                 >
                     <Link className="flex-row compact" to={backURL ?? "/"}
-                    style={{ color: 'white' }}
+                    style={{ color: 'white',
+                        textDecoration: "none",
+                        transition: "all 0.2s ease-in-out",
+                        "&:hover": {
+                            transform: "scale(1.1)",
+                            opacity: 0.8
+                        }
+                    }}
                     >
                         {backURL ? <FaCircleArrowLeft /> : <FaHouse />}
                         {backURL ? "Back" : "Home"}
@@ -24,7 +31,9 @@ export default ({children, backURL, title, buttons}) => {
                     <span className="spacer"></span>
                     {buttons}
                     <Link className="flex-row compact" to="/account"
-                    style={{ color: 'white' }}
+                    style={{ color: 'white',
+                        textDecoration: "none"
+                    }}
                     >
                         <FaCircleUser />
                         {account?.username}
