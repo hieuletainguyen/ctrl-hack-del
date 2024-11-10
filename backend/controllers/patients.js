@@ -15,12 +15,12 @@ const addPatient = async (req, res) => {
     const {report, patientName} = req.body;
     const cookie = req.cookies;
 
-    // const decoded = await _decode_token(cookie.token);
-    // if (decoded.message === "Invalid token") {
-    //     return res.status(401).json({ message: "Invalid token" });
-    // }
+    const decoded = await _decode_token(cookie.token);
+    if (decoded.message === "Invalid token") {
+        return res.status(401).json({ message: "Invalid token" });
+    }
 
-    // get all skills required 
+    // get all skills required =============================
     const paramsGetSkills = {
         TableName: "Skill"
     };
@@ -36,6 +36,8 @@ const addPatient = async (req, res) => {
             return skills.map((skill) => skill.name);
         }
     });
+
+    //==========================================================
 
     let resultTreatment = await _call_openai(report, skills);
     resultTreatment = JSON.parse(resultTreatment);

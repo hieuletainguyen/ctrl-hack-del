@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import account_routes from "./routes/account_route.js";
 import patient_routes from "./routes/patient_route.js";
+import nurse_routes from "./routes/nurse_route.js";
+import skill_routes from "./routes/skill_route.js";
 import cookieParser from 'cookie-parser';
 import dotenv from "dotenv";
 
@@ -22,6 +24,8 @@ app.use(cors(corsOptions))
 app.use(cookieParser())
 app.use(account_routes)
 app.use(patient_routes)
+app.use(nurse_routes)
+app.use(skill_routes)
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
