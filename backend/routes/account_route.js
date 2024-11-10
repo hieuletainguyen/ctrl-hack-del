@@ -14,7 +14,7 @@ router.post("/add-account",
 router.post("/auth", 
     body("username").not().isEmpty().escape(),
     body("password").not().isEmpty().escape(),
-    account.authorization
+    account.authentication
 );
 
 router.post("/logout", account.logout);

@@ -3,7 +3,9 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { dynamoDB } from "../database/dynamodb.js";
 import dotenv from "dotenv";
+import { v4 as uuidv4 } from "uuid";
 import AWS from "aws-sdk";
+import { _decode_token } from "../helper/helper.js";
 
 dotenv.config();
 
@@ -70,7 +72,7 @@ const addAccount = async (req, res) => {
     }
 }
 
-const authorization = async (req, res) => {
+const authentication = async (req, res) => {
     const { username, password } = req.body;
 
     const params = {
@@ -117,7 +119,7 @@ const authorization = async (req, res) => {
             })
             
         } else {
-            return res.status(401).json({message: "Invalid email or password"})
+            return res.status(401).json({message: "Invalid username or password"})
         }
 
     })
@@ -144,38 +146,6 @@ const logout = (req, res) => {
         })
     }
 }
-
-const _decode_token = (token) => {
-    return new Promise((resolve, reject) => {
-        jwt.verify(token, jwtSecretkey, (err, decoded) => {
-            if (err) {
-                reject({ message: "Invalid token" });
-                return;
-            }
-
-            const params = {
-                TableName: "Token",
-                Key: {
-                    token: { S: token }
-                }
-            };
-
-            dynamoDB.getItem(params, (err, data) => {
-                if (err) {
-                    reject({ message: err });
-                    return;
-                }
-                
-                if (Object.keys(data).length === 0) {
-                    reject({ message: "Invalid token" });
-                    return;
-                }
-                
-                resolve({ message: "success", userId: decoded.userId });
-            });
-        });
-    });
-};
 
 const decode_token =  (req, res) => {
     const token = req.cookies?.TOKENS;
@@ -230,7 +200,7 @@ const getAccount = async (req, res) => {
 
 export {
     addAccount, 
-    authorization, 
+    authentication, 
     logout, 
     decode_token, 
     getAccount

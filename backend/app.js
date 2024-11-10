@@ -1,12 +1,15 @@
 import express from "express";
 import cors from "cors";
 import account_routes from "./routes/account_route.js";
+import patient_routes from "./routes/patient_route.js";
 import cookieParser from 'cookie-parser';
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
 
 const port = 9897;
-
 
 var corsOptions = {
   origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
@@ -18,7 +21,7 @@ app.use(express.json());
 app.use(cors(corsOptions))
 app.use(cookieParser())
 app.use(account_routes)
-
+app.use(patient_routes)
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
