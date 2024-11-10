@@ -259,7 +259,7 @@ const deletePatient = async (req, res) => {
 
 const recentPatient = async (req, res) => {
     const token = req.cookies.TOKENS;
-    const tokenData = await _decode_token(token);
+    const tokenData = _decode_token(token);
 
     if (tokenData.message !== "success") {
         return res.status(401).json({message: "No authentication token found"});

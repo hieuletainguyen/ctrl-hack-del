@@ -38,7 +38,7 @@ export const _decode_token = (token) => {
     //     });
     // });
 
-    jwt.verify(token, jwtSecretkey, (err, decoded) => {
+    const decodedResult = jwt.verify(token, jwtSecretkey, (err, decoded) => {
         if (err) {
             return { message: "Invalid token" };
         }
@@ -63,7 +63,7 @@ export const _decode_token = (token) => {
         });
     });
 
-
+    return decodedResult;
 };
 
 export const _call_openai = async (report, skills) => {
