@@ -1,7 +1,15 @@
 import { v4 as uuidv4 } from "uuid";
 import { dynamoDB } from "../database/dynamodb.js";
+import { _decode_token } from "../helper/helper.js";
 
 const addNurse = async (req, res) => {
+    const token = req.cookies.TOKENS;
+    const tokenData = await _decode_token(token);
+
+    if (tokenData.message !== "success") {
+        return res.status(401).json({message: "No authentication token found"});
+    }
+
     const { nurseName, skills } = req.body;
     const paramsAddNurse = {
         TableName: "Nurse",
@@ -23,6 +31,13 @@ const addNurse = async (req, res) => {
 }
 
 const getNurse = async (req, res) => {
+    const token = req.cookies.TOKENS;
+    const tokenData = await _decode_token(token);
+
+    if (tokenData.message !== "success") {
+        return res.status(401).json({message: "No authentication token found"});
+    }
+
     const paramsGetNurse = {
         TableName: "Nurse"
     }
@@ -39,6 +54,13 @@ const getNurse = async (req, res) => {
 
 
 const updateNurse = async (req, res) => {
+    const token = req.cookies.TOKENS;
+    const tokenData = await _decode_token(token);
+
+    if (tokenData.message !== "success") {
+        return res.status(401).json({message: "No authentication token found"});
+    }
+
     const { nurseName, skills } = req.body;
     const nurseId = req.params.nurseId;
     // example {
@@ -68,6 +90,13 @@ const updateNurse = async (req, res) => {
 
 
 const deleteNurse = async (req, res) => {
+    const token = req.cookies.TOKENS;
+    const tokenData = await _decode_token(token);
+
+    if (tokenData.message !== "success") {
+        return res.status(401).json({message: "No authentication token found"});
+    }
+
     const { nurseId } = req.params;
     const paramsDeleteNurse = {
         TableName: "Nurse",

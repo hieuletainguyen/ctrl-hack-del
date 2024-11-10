@@ -3,7 +3,7 @@ import { Router } from "express";
 
 const router = Router();
 
-router.post("/add-skill", skill.addSkill);
-router.get("/get-skill", skill.getSkill);
+router.post("/skills/add-skill", skill.addSkill);
+router.get("/skills/get-skill", skill.getSkill);
 
 export default router;

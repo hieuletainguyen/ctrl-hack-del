@@ -1,6 +1,14 @@
 import { dynamoDB } from "../database/dynamodb.js";
+import { _decode_token } from "../helper/helper.js";
 
 const addSkill = async (req, res) => {
+    const token = req.cookies.TOKENS;
+    const tokenData = await _decode_token(token);
+
+    if (tokenData.message !== "success") {
+        return res.status(401).json({message: "No authentication token found"});
+    }
+
     const { skillName } = req.body;
     const paramsAddSkill = {
         TableName: "Skill",
@@ -17,6 +25,13 @@ const addSkill = async (req, res) => {
 }
 
 const getSkill = async (req, res) => {
+    const token = req.cookies.TOKENS;
+    const tokenData = await _decode_token(token);
+
+    if (tokenData.message !== "success") {
+        return res.status(401).json({message: "No authentication token found"});
+    }
+
     const paramsGetSkill = {
         TableName: "Skill",
         Item: {

@@ -12,6 +12,13 @@ dotenv.config();
 AWS.config.update({ region: "us-east-2"})
 
 const addPatient = async (req, res) => {
+    const token = req.cookies.TOKENS;
+    const tokenData = await _decode_token(token);
+
+    if (tokenData.message !== "success") {
+        return res.status(401).json({message: "No authentication token found"});
+    }
+
     const {name, dob, phone, email} = req.body;
 
     const paramsAddPatient = {
@@ -108,6 +115,13 @@ const submitReport = async (req, res) => {
 }
 
 const getPatientByName = async (req, res) => {
+    const token = req.cookies.TOKENS;
+    const tokenData = await _decode_token(token);
+
+    if (tokenData.message !== "success") {
+        return res.status(401).json({message: "No authentication token found"});
+    }
+
     const {patientName} = req.params;
 
     const paramsGetPatient = {
@@ -143,6 +157,13 @@ const getPatientByName = async (req, res) => {
 }
 
 const updatePatient = async (req, res) => {
+    const token = req.cookies.TOKENS;
+    const tokenData = await _decode_token(token);
+
+    if (tokenData.message !== "success") {
+        return res.status(401).json({message: "No authentication token found"});
+    }
+
     const {patientId} = req.params;
     const {report, patientName} = req.body;
 
@@ -173,6 +194,13 @@ const updatePatient = async (req, res) => {
 }
 
 const deletePatient = async (req, res) => {
+    const token = req.cookies.TOKENS;
+    const tokenData = await _decode_token(token);
+
+    if (tokenData.message !== "success") {
+        return res.status(401).json({message: "No authentication token found"});
+    }
+
     const {patientId} = req.params;
 
     const paramsDeletePatient = {
@@ -196,6 +224,13 @@ const deletePatient = async (req, res) => {
 }
 
 const recentPatient = async (req, res) => {
+    const token = req.cookies.TOKENS;
+    const tokenData = await _decode_token(token);
+
+    if (tokenData.message !== "success") {
+        return res.status(401).json({message: "No authentication token found"});
+    }
+
     const paramsRecentPatient = {
         TableName: "Patient",
         Limit: 15,
