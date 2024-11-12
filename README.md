@@ -125,7 +125,10 @@ MediVersed combines several cutting-edge technologies to create a seamless and r
 ## 📸 Screenshots & Demo
 
 ### Database Schema
+<div align="center">
+  
 ![Database Schema](./assets/tables.png)
+</div>
 
 ### Application Screenshots
 <div align="center">
@@ -146,6 +149,7 @@ MediVersed combines several cutting-edge technologies to create a seamless and r
 
 ### Demo Video
 <div align="center">
+  
 [![MediVersed Demo](http://markdown-videos-api.jorgenkh.no/youtube/SxxhHgZjC4U)](https://youtu.be/SxxhHgZjC4U)
 </div>
 <p align="center"><em>Click the image above to watch the demo video</em></p>
