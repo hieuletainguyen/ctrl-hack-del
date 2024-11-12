@@ -125,7 +125,7 @@ MediVersed combines several cutting-edge technologies to create a seamless and r
 ## 📸 Screenshots & Demo
 
 ### Database Schema
-![Database Schema]("./assets/tables.png")
+![Database Schema](./assets/tables.png)
 
 ### Application Screenshots
 <div align="center">
@@ -145,8 +145,9 @@ MediVersed combines several cutting-edge technologies to create a seamless and r
 </div>
 
 ### Demo Video
+<div align="center">
 [![MediVersed Demo](http://markdown-videos-api.jorgenkh.no/youtube/SxxhHgZjC4U)](https://youtu.be/SxxhHgZjC4U)
-
+</div>
 <p align="center"><em>Click the image above to watch the demo video</em></p>
 
 ---
@@ -167,10 +168,7 @@ MediVersed combines several cutting-edge technologies to create a seamless and r
 <img src="./assets/openai-svgrepo-com.svg" width="45" height="45"/>
 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vitejs/vitejs-original.svg" width="45" height="45"/>
 <img src="./assets/aws-dynamodb-svgrepo-com.svg" width="45" height="45"/>
-
-
-
-
+</p>
 
 ---
 
