@@ -89,7 +89,7 @@ MediVersed combines several cutting-edge technologies to create a seamless and r
     JWT_SECRET_KEY=
 
     # for bcrypt
-    SALT_ROUNDS=5
+    SALT_ROUNDS=
 
     # for OpenAI
     OPENAI_API_KEY=
@@ -123,7 +123,10 @@ MediVersed combines several cutting-edge technologies to create a seamless and r
 ## 📸 Screenshots & Demo
 
 ### Database Schema
-![Database Schema](./assets/database-schema.png)
+<div align="center">
+  
+![Database Schema](./assets/tables.png)
+</div>
 
 ### Application Screenshots
 <div align="center">
@@ -140,14 +143,13 @@ MediVersed combines several cutting-edge technologies to create a seamless and r
   <img src="./assets/new-report.png" alt="Patient New Report" width="600"/>
   <p><em>Patient New Report</em></p>
 
-  <img src="./assets/tables.png" alt="Tables" width="600"/>
-  <p><em>Tables </em></p>
-
 </div>
 
 ### Demo Video
+<div align="center">
+  
 [![MediVersed Demo](http://markdown-videos-api.jorgenkh.no/youtube/SxxhHgZjC4U)](https://youtu.be/SxxhHgZjC4U)
-
+</div>
 <p align="center"><em>Click the image above to watch the demo video</em></p>
 
 ---
@@ -168,10 +170,7 @@ MediVersed combines several cutting-edge technologies to create a seamless and r
 <img src="./assets/openai-svgrepo-com.svg" width="45" height="45"/>
 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vitejs/vitejs-original.svg" width="45" height="45"/>
 <img src="./assets/aws-dynamodb-svgrepo-com.svg" width="45" height="45"/>
-
-
-
-
+</p>
 
 ---
 
