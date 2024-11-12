@@ -1,8 +1,6 @@
 # MediVersed
 
-<div align="center">
-  <img src="./assets/mediversed-logo.png" alt="MediVersed Logo" width="600">
-</div>
+![MediVersed Logo](./assets/mediversed-logo.png)
 
 An Automated Patient-Nurse Matching System for Optimal Healthcare Outcomes
 
