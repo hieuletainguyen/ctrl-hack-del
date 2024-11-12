@@ -1,11 +1,10 @@
-import NavigationLayout from "./lib/navigation";
+import NavigationLayout from "../lib/navigation";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
-import {AccountContext} from "./lib/account"
-import {NurseNavItem} from "./lib/component"
+import {AccountContext} from "../lib/account"
+import {NurseNavItem} from "../lib/component"
 
 const AfterSubmitReport = () => {
-    const navigate = useNavigate()
     const {patient, patientName, report} = useLocation().state
     const [skills, setSkills] = useState([])
     const [nurse, setNurse] = useState(null)

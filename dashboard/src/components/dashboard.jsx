@@ -1,8 +1,8 @@
 import {Link, useNavigate} from "react-router-dom"
 import {FaSquarePlus} from "react-icons/fa6"
-import NavigationLayout from "./lib/navigation"
+import NavigationLayout from "../lib/navigation"
 import {useContext, useEffect, useState} from "react"
-import {AccountContext} from "./lib/account"
+import {AccountContext} from "../lib/account"
 import signinImage from './assets/signin.png'; // Import your background image
 import PopUp from "./PopUp"
 

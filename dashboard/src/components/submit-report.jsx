@@ -1,7 +1,7 @@
-import NavigationLayout from "./lib/navigation";
+import NavigationLayout from "../lib/navigation";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { baseURL } from "./lib/config";
+import { baseURL } from "../lib/config";
 import { useLocation } from "react-router-dom";
 import "./submit-report.css"; // Import the new CSS file
 

@@ -8,60 +8,16 @@ dotenv.config();
 const jwtSecretkey = process.env.JWT_SECRET_KEY;
 
 export const _decode_token = async (token) => {
-    // return new Promise((resolve, reject) => {
-    //     jwt.verify(token, jwtSecretkey, (err, decoded) => {
-    //         if (err) {
-    //             reject({ message: "Invalid token" });
-    //             return;
-    //         }
 
-    //         const params = {
-    //             TableName: "Token",
-    //             Key: {
-    //                 token: { S: token }
-    //             }
-    //         };
-
-    //         dynamoDB.getItem(params, (err, data) => {
-    //             if (err) {
-    //                 reject({ message: err });
-    //                 return;
-    //             }
-                
-    //             if (Object.keys(data).length === 0) {
-    //                 reject({ message: "Invalid token" });
-    //                 return;
-    //             }
-                
-    //             resolve({ message: "success", userId: decoded.userId });
-    //         });
-    //     });
-    // });
-
-    const decodedResult = await jwt.verify(token, jwtSecretkey, async (err, decoded) => {
+    const decodedResult = jwt.verify(token, jwtSecretkey, async (err, decoded) => {
         if (err) {
+            if (err.name === 'TokenExpiredError') {
+                return { message: "Token expired" };
+            }
             return { message: "Invalid token" };
         }
-
-        const params = {
-            TableName: "Token",
-            Key: {
-                token: { S: token }
-            }
-        };
-
-        const data = await dynamoDB.getItem(params).promise().then((data) => {
-            if (err) {
-                return { message: err };
-            }
-            
-            if (Object.keys(data).length === 0) {
-                return { message: "Invalid token" };
-            }
-            
-            return { message: "success", userId: decoded.userId };
-        });
-        return data;
+        
+        return { message: "success", userId: decoded.userId };
     });
 
     return decodedResult;
@@ -124,3 +80,16 @@ export const _match_nurse = async (requiredSkills) => {
         };
     }
 };
+
+export const cleanUpResponseData = (data) => {
+    return Object.keys(data.Item).reduce((acc, key) => {
+        acc[key] = data.Item[key].S || data.Item[key].N || data.Item[key].BOOL;
+        return acc;
+    }, {});
+}
+
+export const generate_salt = async () => {
+    const saltRounds = parseInt(process.env.SALT_ROUNDS);
+    const new_salt = bcrypt.genSalt(saltRounds);
+    return new_salt;
+}

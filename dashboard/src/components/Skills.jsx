@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { baseURL } from "./lib/config";
+import { baseURL } from "../lib/config";
 import { useNavigate } from "react-router-dom";
-import NavigationLayout from "./lib/navigation"
+import NavigationLayout from "../lib/navigation"
 
 export default function Skills() {
     const [skill, setSkill] = useState([]);

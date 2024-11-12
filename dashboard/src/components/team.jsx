@@ -1,8 +1,8 @@
 import {useContext, useEffect, useState} from "react"
-import NavigationLayout from "./lib/navigation"
+import NavigationLayout from "../lib/navigation"
 import {useParams, useNavigate} from "react-router-dom"
-import {AccountContext} from "./lib/account"
-import {NurseNavItem} from "./lib/component"
+import {AccountContext} from "../lib/account"
+import {NurseNavItem} from "../lib/component"
 
 
 const List = ({nurses}) => {

@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import { dynamoDB } from "../database/dynamodb.js";
-import { _decode_token } from "../helper/helper.js";
+import { _decode_token, cleanUpResponseData } from "../helper/helper.js";
 
 const addNurse = async (req, res) => {
     const token = req.cookies.TOKENS;
@@ -26,7 +26,7 @@ const addNurse = async (req, res) => {
             data: data
         });
     }).catch((err) => {
-        return res.status(400).json({message: "error"});
+        return res.status(400).json({message: "error", data: err});
     });
 }
 
@@ -55,17 +55,11 @@ const getNurse = async (req, res) => {
 
     await dynamoDB.scan(paramsGetNurse).promise().then((data) => {
         data.Items = data.Items.map((item) => {
-            return Object.keys(item).reduce((acc, key) => {
-                acc[key] = item[key].SS || item[key].S || item[key].N || item[key].BOOL;
-                return acc;
-            }, {});
+            return cleanUpResponseData(item)
         });
-        return res.status(200).json({
-            message: "success",
-            data: data.Items
-        });
+        return res.status(200).json({ message: "success", data: data.Items});
     }).catch((err) => {
-        return res.status(400).json({message: err});
+        return res.status(400).json({ message: "error", data: err});
     });
 }
 
@@ -79,13 +73,7 @@ const updateNurse = async (req, res) => {
     }
 
     const { nurseName, skills } = req.body;
-    console.log(nurseName, skills);
     const nurseId = req.params.nurseId;
-    // example {
-    //     "id": "90e46e0c-9a52-4173-a103-e98111e9ab74",
-    //     "nurseName": "Hirano",
-    //     "skills": ["Catheter Care"]
-    // }
     
     const paramsUpdateNurse = {
         TableName: "Nurse",
@@ -100,9 +88,9 @@ const updateNurse = async (req, res) => {
     }
 
     await dynamoDB.updateItem(paramsUpdateNurse).promise().then((data) => {
-        return res.status(200).json({message: "success", data: data});
+        return res.status(200).json({ message: "success", data: data});
     }).catch((err) => {
-        return res.status(400).json({message: "error"});
+        return res.status(400).json({ message: "error", data: err});
     });
 }
 
@@ -122,9 +110,9 @@ const deleteNurse = async (req, res) => {
     }
 
     await dynamoDB.deleteItem(paramsDeleteNurse).promise().then((data) => {
-        return res.status(200).json({message: "success", data: data});
+        return res.status(200).json({ message: "success", data: data});
     }).catch((err) => {
-        return res.status(400).json({message: "error"});
+        return res.status(400).json({ message: "error", data: err});
     });
 }
 

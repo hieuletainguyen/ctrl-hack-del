@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./PopUp.css";
-import { baseURL } from "./lib/config";
+import { baseURL } from "../lib/config";
 import { useNavigate } from "react-router-dom";
 
 export default function PopUp({close}) {

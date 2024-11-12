@@ -1,6 +1,3 @@
-import { validationResult } from "express-validator";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import { dynamoDB } from "../database/dynamodb.js";
 import dotenv from "dotenv";
 import { v4 as uuidv4 } from "uuid";
@@ -45,10 +42,7 @@ const addPatient = async (req, res) => {
             }
         });
     }).catch((err) => {
-        return res.status(400).json({
-            message: "error",
-            data: err
-        });
+        return res.status(400).json({ message: "error", data: err});
     });
 }
 
@@ -68,10 +62,7 @@ const submitReport = async (req, res) => {
     }
     const patientInfo = await dynamoDB.getItem(paramsGetPatient).promise().then((data) => {
         if (data.Item) {
-            data.Item = Object.keys(data.Item).reduce((acc, key) => {
-                acc[key] = data.Item[key].SS || data.Item[key].S || data.Item[key].N || data.Item[key].BOOL;
-                return acc;
-            }, {});
+            data.Item = cleanUpResponseData(data.Item);
         }
         return data.Item;
     });
@@ -122,10 +113,7 @@ const submitReport = async (req, res) => {
             }
         });
     }).catch((err) => {
-        return res.status(400).json({
-            message: "error",
-            data: err
-        });
+        return res.status(400).json({ message: "error", data: err });
     });
 
 }
@@ -154,10 +142,7 @@ const getPatientByName = async (req, res) => {
     await dynamoDB.scan(paramsGetPatient).promise().then((data) => {
         if (data.Items) {
             data.Items = data.Items.map((item) => {
-                return Object.keys(item).reduce((acc, key) => {
-                    acc[key] = item[key].SS || item[key].S || item[key].N || item[key].BOOL;
-                    return acc;
-                }, {});
+                return cleanUpResponseData(item);
             });
             return res.status(200).json({
                 message: "success",
@@ -165,10 +150,7 @@ const getPatientByName = async (req, res) => {
             });
         }
     }).catch((err) => {
-        return res.status(400).json({
-            message: "error",
-            data: err
-        });
+        return res.status(400).json({ message: "error", data: err });
     });
 }
 
@@ -190,19 +172,10 @@ const getPatientById = async (req, res) => {
     };
 
     await dynamoDB.getItem(paramsGetPatient).promise().then((data) => { 
-        data.Item = Object.keys(data.Item).reduce((acc, key) => {
-            acc[key] = data.Item[key].SS || data.Item[key].S || data.Item[key].N || data.Item[key].BOOL;
-            return acc;
-        }, {});
-        return res.status(200).json({
-            message: "success",
-            data: data.Item
-        });
+        data.Item = cleanUpResponseData(data.Item);
+        return res.status(200).json({ message: "success", data: data.Item});
     }).catch((err) => {
-        return res.status(400).json({
-            message: "error",
-            data: err
-        });
+        return res.status(400).json({ message: "error", data: err});
     });
 }
 
@@ -231,15 +204,9 @@ const updatePatient = async (req, res) => {
     console.log(paramsUpdatePatient);
 
     await dynamoDB.updateItem(paramsUpdatePatient).promise().then((data) => {
-        return res.status(200).json({
-            message: "success",
-            data: data
-        });
+        return res.status(200).json({ message: "success", data: data});
     }).catch((err) => {
-        return res.status(400).json({
-            message: "error",
-            data: err
-        });
+        return res.status(400).json({ message: "error", data: err});
     });
 }
 
@@ -261,15 +228,9 @@ const deletePatient = async (req, res) => {
     }
 
     await dynamoDB.deleteItem(paramsDeletePatient).promise().then((data) => {
-        return res.status(200).json({
-            message: "success",
-            data: data
-        });
+        return res.status(200).json({ message: "success", data: data});
     }).catch((err) => {
-        return res.status(400).json({
-            message: "error",
-            data: err
-        });
+        return res.status(400).json({ message: "error", data: err});
     });
 }
 
@@ -290,21 +251,12 @@ const recentPatient = async (req, res) => {
 
     await dynamoDB.scan(paramsRecentPatient).promise().then((data) => {
         data.Items = data.Items.map((item) => {
-            return Object.keys(item).reduce((acc, key) => {
-                acc[key] = item[key].SS || item[key].S || item[key].N || item[key].BOOL;
-                return acc;
-            }, {});
+            return cleanUpResponseData(item);
         });
         data.Items = data.Items.filter((item) => item.patientName !== undefined && item.patientName !== null);
-        return res.status(200).json({
-            message: "success",
-            data: data.Items
-        });
+        return res.status(200).json({ message: "success", data: data.Items});
     }).catch((err) => {
-        return res.status(400).json({
-            message: "error",
-            data: err
-        });
+        return res.status(400).json({ message: "error", data: err});
     });
 }
 

@@ -5,19 +5,13 @@ import { dynamoDB } from "../database/dynamodb.js";
 import dotenv from "dotenv";
 import { v4 as uuidv4 } from "uuid";
 import AWS from "aws-sdk";
-import { _decode_token } from "../helper/helper.js";
+import { _decode_token, cleanUpResponseData, generate_salt } from "../helper/helper.js";
 
 dotenv.config();
 
 AWS.config.update({ region: "us-east-2"})
 
 const jwtSecretkey = process.env.JWT_SECRET_KEY;
-
-const generate_salt = async () => {
-    const saltRounds = parseInt(process.env.SALT_ROUNDS);
-    const new_salt = bcrypt.genSalt(saltRounds);
-    return new_salt;
-}
 
 const addAccount = async (req, res) => {
     const errors = validationResult(req);
@@ -35,7 +29,7 @@ const addAccount = async (req, res) => {
                 '#username': 'username'
             },
             ExpressionAttributeValues: {
-                ':usernameValue': { S: username }  // Define the value with the type
+                ':usernameValue': { S: username }
             }
         };
         dynamoDB.scan(params, async (err, data) => {
@@ -100,24 +94,9 @@ const authentication = async (req, res) => {
 
         if (match) {
             const token = jwt.sign({userId: userId}, jwtSecretkey, {expiresIn: "5h"});
-            
-            const addingParams = {
-                TableName: "Token",
-                Item: {
-                    token: { S: token },
-                    userId: {S: userId}
-                },
-            };
 
-            dynamoDB.putItem(addingParams, (err, data) => {
-                if (err) {
-                    return res.status(500).json({message: "Error during adding"})
-                } else {
-                    res.cookie("TOKENS", token, {httpOnly: true, secure: true, maxAge: 1000 * 60 * 60 * 5});
-                    return res.status(200).json({message: "success"})
-                }
-            })
-            
+            res.cookie("TOKENS", token, {httpOnly: true, secure: true, maxAge: 1000 * 60 * 60 * 5});
+            return res.status(200).json({message: "success"})
         } else {
             return res.status(401).json({message: "Invalid username or password"})
         }
@@ -127,39 +106,33 @@ const authentication = async (req, res) => {
 }
 
 const logout = (req, res) => {
-    const token = req.cookies?.TOKENS;
-
-    if (token){
-        const params = {
-            TableName: "Token",
-            Key: {
-                token: {S: token}
-            }
-        };
-
-        dynamoDB.deleteItem(params, (err, data) => {
-            if (err) {
-                return res.status(400).json({message: err})
-            }
-            res.clearCookie("TOKENS");
-            return res.status(200).json({message: "success"})
-        })
-    }
+    res.clearCookie("TOKENS");
+    return res.status(200).json({message: "success"});
 }
 
-const decode_token =  (req, res) => {
+const decode_token = async (req, res) => {
     const token = req.cookies?.TOKENS;
-    console.log(token)
-    if (token) {
-        const data = _decode_token(token);
-        if (data.message === "success") {
-            return res.status(200).json(data);
-        } else {
-            return res.status(401).json(data);
-        }
+    
+    if (!token) {
+        return res.status(401).json({ message: "No token provided" });
     }
-}
 
+    
+    const decoded = await _decode_token(token);
+
+    if (decoded.message === "Token expired") {
+        res.clearCookie("TOKENS");
+        return res.status(401).json({ message: "Token expired" });
+    }
+
+    if (decoded.message === "Invalid token") {
+        return res.status(401).json({ message: "Invalid token" });
+    }
+
+    return res.status(200).json({ message: "success", userId: decoded.userId });
+}
+    
+    
 const getAccount = async (req, res) => {
     const token = req.cookies?.TOKENS;
 
@@ -185,10 +158,7 @@ const getAccount = async (req, res) => {
                 delete data.Item.password;
             }
             if (data.Item) {
-                data.Item = Object.keys(data.Item).reduce((acc, key) => {
-                    acc[key] = data.Item[key].S || data.Item[key].N || data.Item[key].BOOL;
-                    return acc;
-                }, {});
+                data.Item = cleanUpResponseData(data.Item);
             }
             return res.status(200).json({ message: "success", data: data.Item });
         });

@@ -1,5 +1,5 @@
 import { dynamoDB } from "../database/dynamodb.js";
-import { _decode_token } from "../helper/helper.js";
+import { _decode_token, cleanUpResponseData } from "../helper/helper.js";
 
 const addSkill = async (req, res) => {
     const token = req.cookies.TOKENS;
