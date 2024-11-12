@@ -91,7 +91,7 @@ MediVersed combines several cutting-edge technologies to create a seamless and r
     JWT_SECRET_KEY=
 
     # for bcrypt
-    SALT_ROUNDS=5
+    SALT_ROUNDS=
 
     # for OpenAI
     OPENAI_API_KEY=
