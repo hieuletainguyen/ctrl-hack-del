@@ -125,7 +125,7 @@ MediVersed combines several cutting-edge technologies to create a seamless and r
 ## 📸 Screenshots & Demo
 
 ### Database Schema
-![Database Schema](./assets/database-schema.png)
+![Database Schema]("./assets/tables.png")
 
 ### Application Screenshots
 <div align="center">
@@ -141,9 +141,6 @@ MediVersed combines several cutting-edge technologies to create a seamless and r
 
   <img src="./assets/new-report.png" alt="Patient New Report" width="600"/>
   <p><em>Patient New Report</em></p>
-
-  <img src="./assets/tables.png" alt="Tables" width="600"/>
-  <p><em>Tables </em></p>
 
 </div>
 
