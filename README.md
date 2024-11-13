@@ -127,8 +127,11 @@ MediVersed combines several cutting-edge technologies to create a seamless and r
 <div align="center">
   
 <a href="https://www.figma.com/design/imLQkINAwPxOpcuDoT1Ccj/Hospital-App?node-id=0-1&t=A2VFKCklu1Z4qNPL-1">
+  
   <img src="./assets/figma-design.png" alt="Design Prototype" width="600"/>
+
   View Full Design in Figma
+  
 </a>
 </div>
 
